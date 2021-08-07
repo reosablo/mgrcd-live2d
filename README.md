@@ -3,10 +3,11 @@
 Invite Magia Record characters to your mobile home screen or your desktop
 wallpaper.
 
-## What's this
+## What's this?
 
-This program generates Live2D models that works in
-[Live2DViewerEX](https://store.steampowered.com/app/616720/Live2DViewerEX/).
+This is a Live2D model generator program for
+[Live2DViewerEX](https://store.steampowered.com/app/616720/Live2DViewerEX/). The
+original game app contents are required to run this program.
 
 Live2DViewerEX is not just a Live2D Viewer. It enables Live2D models to have
 more powerful expressions; that's powerful enough to embed magireco characters'
@@ -88,5 +89,12 @@ All model ids will be processed with no cast parameters.
 
 ### Load generated Live2D models into Live2DViewerEX
 
+Follow the instructions in the official Live2DViewerEX documents.
+
 - https://live2d.pavostudio.com/doc/en-us/pc/quick-start/#load-model
 - https://live2d.pavostudio.com/doc/en-us/android/manual/#model
+
+## About this project
+
+- Known issues and feature plans are in
+  [backlog](https://github.com/reosablo/mgrcd-live2d/projects/1).
