@@ -47,11 +47,6 @@ export const command = new Command<void>()
     "Generate all models with default target",
     { default: false },
   )
-  .option<{ dryRun: boolean }>(
-    "--dry-run [:boolean]",
-    "Preview output without generating models",
-    { default: false },
-  )
   .option<{ cast?: string[] }>(
     "--cast [cast:string]",
     "Change chara id => model id mapping",
@@ -68,10 +63,7 @@ export const command = new Command<void>()
     },
   )
   .action(
-    async ({ resource, all, cast: castArgs = [], dryRun }, targetArgs = []) => {
-      if (dryRun) {
-        console.info(`--dry-run specified`);
-      }
+    async ({ resource, all, cast: castArgs = [] }, targetArgs = []) => {
       let targets = [...targetArgs.reduce((targetArgs, targetArg) => {
         if (!targetParameterPattern.test(targetArg)) {
           throw new ValidationError(
