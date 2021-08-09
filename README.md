@@ -22,30 +22,30 @@ behaviors like tap reactions into the models.
 
 ## Features
 
-The generated models behaves like magireco apps's home. They reactions when they
+The generated models behaves like magireco app's home. They reacts when they
 appeared or are tapped.
 
-| when     | reaction       | condition                      |
-| -------- | -------------- | ------------------------------ |
-| appeared | 自己紹介①          | only first time                |
-| appeared | 自己紹介②          | possibly second time           |
-| appeared | ログイン①(初回ログイン時) | everytime except for the above |
-| tapped   | ログイン②(朝)       | from 6am to 9am                |
-| tapped   | ログイン③(昼)       | from 11am to 1pm               |
-| tapped   | ログイン④(夜)       | from 5pm to 7pm                |
-| tapped   | ログイン⑤(深夜)      | from 10pm to 0am               |
-| tapped   | ログイン⑥(その他)     | anytime except the above       |
-| tapped   | ログイン⑦(AP最大時)   |                                |
-| tapped   | ログイン⑧(BP最大時)   |                                |
-| tapped   | 魔法少女タップ①       |                                |
-| tapped   | 魔法少女タップ②       |                                |
-| tapped   | 魔法少女タップ③       |                                |
-| tapped   | 魔法少女タップ④       |                                |
-| tapped   | 魔法少女タップ⑤       | 8+ taps                        |
-| tapped   | 魔法少女タップ⑥       | 16+ taps                       |
-| tapped   | 魔法少女タップ⑦       | 24+ taps                       |
-| tapped   | 魔法少女タップ⑧       | 32+ taps                       |
-| tapped   | (secret)       | 40+ taps                       |
+| when     | reaction       | condition                       |
+| -------- | -------------- | ------------------------------- |
+| appeared | 自己紹介①          | only first time                 |
+| appeared | 自己紹介②          | possibly second time            |
+| appeared | ログイン①(初回ログイン時) | every time except for the above |
+| tapped   | ログイン②(朝)       | from 6am to 9am                 |
+| tapped   | ログイン③(昼)       | from 11am to 1pm                |
+| tapped   | ログイン④(夜)       | from 5pm to 7pm                 |
+| tapped   | ログイン⑤(深夜)      | from 10pm to 0am                |
+| tapped   | ログイン⑥(その他)     | anytime except the above        |
+| tapped   | ログイン⑦(AP最大時)   |                                 |
+| tapped   | ログイン⑧(BP最大時)   |                                 |
+| tapped   | 魔法少女タップ①       |                                 |
+| tapped   | 魔法少女タップ②       |                                 |
+| tapped   | 魔法少女タップ③       |                                 |
+| tapped   | 魔法少女タップ④       |                                 |
+| tapped   | 魔法少女タップ⑤       | 8+ taps                         |
+| tapped   | 魔法少女タップ⑥       | 16+ taps                        |
+| tapped   | 魔法少女タップ⑦       | 24+ taps                        |
+| tapped   | 魔法少女タップ⑧       | 32+ taps                        |
+| tapped   | (secret)       | 40+ taps                        |
 
 ## Usage
 
@@ -82,10 +82,10 @@ Generated: /path/to/resource/image_native/live2d_v4/100101/model-100100.model3.j
 ```
 
 `100101` in input parameter is a model id of Iroha Tamaki (School Uniform). To
-see all avaliable model ids, run `mgrcd-live2d list-model`.
+see all available model ids, run `mgrcd-live2d list-model`.
 
 `100100` in output filename is a scenario id of Iroha Tamaki's default behavior.
-To see all avaliable scenario ids, run `mgrcd-live2d list-scenario`.
+To see all available scenario ids, run `mgrcd-live2d list-scenario`.
 
 #### Generate Iroha Tamaki (School Uniform) model behaves like Christmas 2017 version
 
@@ -97,10 +97,10 @@ Generated: /path/to/resource/image_native/live2d_v4/100101/model-100150.model3.j
 `100150` in input parameter is a scenario id of Iroha Tamaki (2017 Christmas).
 
 `--cast 100100=100101` describes mapping of chara id in scenario to model id. To
-see all avaliable scenario ids, run `mgrcd-live2d list-chara $scenario_id`.
+see all available scenario ids, run `mgrcd-live2d list-chara $scenario_id`.
 
 To be precise, `100101` in the former example is also a scenario id. scenario id
-`100101` doesn't exist so falled back to `100100` and implicitly add parameter
+`100101` doesn't exist so fall back to `100100` and implicitly add parameter
 like `--cast 100100=100101`.
 
 #### Generate all models
