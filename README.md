@@ -34,7 +34,7 @@ appeared or are tapped.
 | tapped   | ログイン③(昼)       | from 11am to 1pm               |
 | tapped   | ログイン④(夜)       | from 5pm to 7pm                |
 | tapped   | ログイン⑤(深夜)      | from 10pm to 0am               |
-| tapped   | ログイン⑥(その他)     |                                |
+| tapped   | ログイン⑥(その他)     | anytime except the above       |
 | tapped   | ログイン⑦(AP最大時)   |                                |
 | tapped   | ログイン⑧(BP最大時)   |                                |
 | tapped   | 魔法少女タップ①       |                                |

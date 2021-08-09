@@ -99,13 +99,11 @@ export const presetMotions = [
   ["Tap", {
     Name: "GreetAP",
     Priority: 9,
-    ignorable: true,
     Intimacy: { Bonus: 1 },
   }],
   ["Tap", {
     Name: "GreetBP",
     Priority: 9,
-    ignorable: true,
     Intimacy: { Bonus: 1 },
   }],
 ] as const;
