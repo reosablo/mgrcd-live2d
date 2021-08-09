@@ -3,22 +3,49 @@
 Invite Magia Record characters to your mobile home screen or your desktop
 wallpaper.
 
-## What's this?
-
-This is a Live2D model generator program for
-[Live2DViewerEX](https://store.steampowered.com/app/616720/Live2DViewerEX/). The
-original game app contents are required to run this program.
-
-Live2DViewerEX is not just a Live2D Viewer. It enables Live2D models to have
-more powerful expressions; that's powerful enough to embed magireco characters'
-behaviors like tap reactions into the models.
-
 ## Disclaimer
 
 - Magia Record (magireco) is copyrighted by
   [©Magica Quartet/Aniplex・Magia Record Partners](https://magireco.com/)
 - NEVER DISTRIBUTE generated data publicly. Enjoy for PRIVATE USE ONLY.
 - This repository doesn't include any game contents.
+
+## What's this?
+
+This is a Live2D model generator for
+[Live2DViewerEX](https://store.steampowered.com/app/616720/Live2DViewerEX/) from
+magireco game contents.
+
+Live2DViewerEX is not just a Live2D Viewer. It enables Live2D models to have
+more powerful expressions; that's powerful enough to embed magireco characters'
+behaviors like tap reactions into the models.
+
+## Features
+
+The generated models behaves like magireco apps's home. They reactions when they
+appeared or are tapped.
+
+| when     | reaction       | condition                      |
+| -------- | -------------- | ------------------------------ |
+| appeared | 自己紹介①          | only first time                |
+| appeared | 自己紹介②          | possibly second time           |
+| appeared | ログイン①(初回ログイン時) | everytime except for the above |
+| tapped   | ログイン②(朝)       | from 6am to 9am                |
+| tapped   | ログイン③(昼)       | from 11am to 1pm               |
+| tapped   | ログイン④(夜)       | from 5pm to 7pm                |
+| tapped   | ログイン⑤(深夜)      | from 10pm to 0am               |
+| tapped   | ログイン⑥(その他)     |                                |
+| tapped   | ログイン⑦(AP最大時)   |                                |
+| tapped   | ログイン⑧(BP最大時)   |                                |
+| tapped   | 魔法少女タップ①       |                                |
+| tapped   | 魔法少女タップ②       |                                |
+| tapped   | 魔法少女タップ③       |                                |
+| tapped   | 魔法少女タップ④       |                                |
+| tapped   | 魔法少女タップ⑤       | 8+ taps                        |
+| tapped   | 魔法少女タップ⑥       | 16+ taps                       |
+| tapped   | 魔法少女タップ⑦       | 24+ taps                       |
+| tapped   | 魔法少女タップ⑧       | 32+ taps                       |
+| tapped   | (secret)       | 40+ taps                       |
 
 ## Usage
 
