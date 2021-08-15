@@ -2,8 +2,8 @@ import {
   Command,
   ValidationError,
 } from "https://deno.land/x/cliffy@v0.19.4/command/mod.ts";
-import { getModelName, getScenario } from "../_internal/io.ts";
-import { patchModelName } from "../_internal/config.ts";
+import { getCharaName, getScenario } from "../_internal/io.ts";
+import { patchCharaName } from "../_internal/config.ts";
 import { getRoleIds } from "../_internal/install.ts";
 
 const scenarioIdPattern = /^(?<target>\d{6})$/;
@@ -37,10 +37,10 @@ export const command = new Command<void>()
     );
     for (const roleId of roleIds) {
       if (detailed) {
-        const name = await getModelName(`${roleId}`, { resource }).catch((_) =>
+        const name = await getCharaName(`${roleId}`, { resource }).catch((_) =>
           undefined
         );
-        console.log(`${roleId}${name ? `\t${patchModelName(name)}` : ""}`);
+        console.log(`${roleId}${name ? `\t${patchCharaName(name)}` : ""}`);
       } else {
         console.log(roleId);
       }

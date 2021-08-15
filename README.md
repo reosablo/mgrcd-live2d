@@ -81,8 +81,8 @@ $ mgrcd-live2d bake-ex-model 100101 --resource /path/to/resource
 Generated: /path/to/resource/image_native/live2d_v4/100101/model-100100.model3.json
 ```
 
-`100101` in input parameter is a model id of Iroha Tamaki (School Uniform). To
-see all available model ids, run `mgrcd-live2d list-model`.
+`100101` in input parameter is a chara id of Iroha Tamaki (School Uniform). To
+see all available chara ids, run `mgrcd-live2d list-chara`.
 
 `100100` in output filename is a scenario id of Iroha Tamaki's default behavior.
 To see all available scenario ids, run `mgrcd-live2d list-scenario`.
@@ -96,7 +96,7 @@ Generated: /path/to/resource/image_native/live2d_v4/100101/model-100150.model3.j
 
 `100150` in input parameter is a scenario id of Iroha Tamaki (2017 Christmas).
 
-`--cast 100100=100101` describes mapping of role id in scenario to model id. To
+`--cast 100100=100101` describes mapping of role id in scenario to chara id. To
 see all available scenario ids, run `mgrcd-live2d list-role $scenario_id`.
 
 To be precise, `100101` in the former example is also a scenario id. scenario id
@@ -112,7 +112,7 @@ Generated: /path/to/resource/image_native/live2d_v4/100101/model-100100.model3.j
 ...
 ```
 
-All model ids will be processed with no cast parameters.
+All chara ids will be processed with no cast parameters.
 
 ### Load generated Live2D models into Live2DViewerEX
 

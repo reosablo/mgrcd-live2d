@@ -1,9 +1,9 @@
 import { Command } from "https://deno.land/x/cliffy@v0.19.4/command/mod.ts";
-import { getModelIds, getModelName } from "../_internal/io.ts";
-import { patchModelName } from "../_internal/config.ts";
+import { getCharaIds, getCharaName } from "../_internal/io.ts";
+import { patchCharaName } from "../_internal/config.ts";
 
 export const command = new Command<void>()
-  .description("Display Live2D model ids from magireco data")
+  .description("Display magireco chara ids from magireco data")
   .option<{ resource: string }>(
     "--resource <path:string>",
     "magireco resource data directory path",
@@ -14,12 +14,12 @@ export const command = new Command<void>()
     "Output with names",
     { default: true },
   ).action(async ({ resource, detailed }) => {
-    for await (const modelId of getModelIds({ resource })) {
+    for await (const charaId of getCharaIds({ resource })) {
       if (detailed) {
-        const name = await getModelName(modelId, { resource });
-        console.log(`${modelId}${name ? `\t${patchModelName(name)}` : ""}`);
+        const name = await getCharaName(charaId, { resource });
+        console.log(`${charaId}${name ? `\t${patchCharaName(name)}` : ""}`);
       } else {
-        console.log(modelId);
+        console.log(charaId);
       }
     }
   });

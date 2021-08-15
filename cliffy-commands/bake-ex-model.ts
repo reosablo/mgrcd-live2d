@@ -5,8 +5,8 @@ import {
 import { getStoryId } from "../data/magireco/general-scenario.ts";
 import type { Scenario } from "../zod-schemas/magireco/scenario.ts";
 import {
+  getCharaIds,
   getModel,
-  getModelIds,
   getModelPath,
   getParam,
   getScenario,
@@ -14,7 +14,7 @@ import {
 } from "../_internal/io.ts";
 import {
   motionEntries,
-  patchModelName,
+  patchCharaName,
   postprocessModel,
   preprocessModel,
   presetMotions,
@@ -29,7 +29,7 @@ import {
   installScenario,
 } from "../_internal/install.ts";
 
-const castParameterPattern = /^(?<roleId>\d{6})=(?<modelId>\d{6})$/;
+const castParameterPattern = /^(?<roleId>\d{6})=(?<charaId>\d{6})$/;
 const targetParameterPattern = /^(?<target>\d{6})$/;
 
 export const command = new Command<void>()
@@ -49,7 +49,7 @@ export const command = new Command<void>()
   )
   .option<{ cast?: string[] }>(
     "--cast [cast:string]",
-    "Change role id => model id mapping",
+    "Change role id => chara id mapping",
     {
       collect: true,
       value: (arg: string, cast: string[] = []) => {
@@ -78,15 +78,15 @@ export const command = new Command<void>()
             `target parameters are ignored because --all parameter is specified`,
           );
         }
-        const modelIds = [] as string[];
-        for await (const modelId of getModelIds({ resource })) {
-          modelIds.push(modelId);
+        const charaIds = [] as string[];
+        for await (const charaId of getCharaIds({ resource })) {
+          charaIds.push(charaId);
         }
-        targets = modelIds;
+        targets = charaIds;
       }
       const baseCast = new Map(castArgs.map((arg) => {
-        const { roleId, modelId } = arg.match(castParameterPattern)!.groups!;
-        return [+roleId, +modelId] as const;
+        const { roleId, charaId } = arg.match(castParameterPattern)!.groups!;
+        return [+roleId, +charaId] as const;
       }));
       await Promise.allSettled(targets.map(async (target) => {
         const familyId = target.replace(/.{2}$/, "00");
@@ -128,14 +128,14 @@ export const command = new Command<void>()
         const roleIds = [...getRoleIds(filteredScenario)]
           .filter((roleId) => roleId !== undefined && roleId > 0) as number[];
         for (const roleId of roleIds) {
-          const modelId = `${cast.get(roleId) ?? roleId}`;
+          const charaId = `${cast.get(roleId) ?? roleId}`;
           const [model, param] = await Promise.all([
-            getModel(modelId, { resource }).catch((_) => undefined),
-            getParam(modelId, { resource }).catch((_) => undefined),
+            getModel(charaId, { resource }).catch((_) => undefined),
+            getParam(charaId, { resource }).catch((_) => undefined),
           ]);
           if (model === undefined) {
             console.log(
-              `Skipped because model not found: ${modelId} (roleId=${roleId})`,
+              `Skipped because model not found: ${charaId} (roleId=${roleId})`,
             );
             continue;
           }
@@ -162,15 +162,15 @@ export const command = new Command<void>()
           if (param !== undefined) {
             installParam(model, {
               ...param,
-              charaName: patchModelName(param.charaName),
+              charaName: patchCharaName(param.charaName),
             });
           }
           postprocessModel(model);
           const basename = roleIds.length > 1
             ? `model-${scenarioId}@${roleId}`
             : `model-${scenarioId}`;
-          await setModel(modelId, model, { resource, basename });
-          const modelPath = getModelPath(modelId, { resource, basename });
+          await setModel(charaId, model, { resource, basename });
+          const modelPath = getModelPath(charaId, { resource, basename });
           console.log(`Generated: ${modelPath}`);
         }
       })).then((results) => {

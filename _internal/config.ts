@@ -215,8 +215,8 @@ export function postprocessModel(model: Model) {
   options.AnisoLevel = 2;
 }
 
-export function patchModelName(modelName: string) {
-  return modelName.trim().replace(/_?\(?圧縮\)?|\(画面表示\)/g, "");
+export function patchCharaName(charaName: string) {
+  return charaName.trim().replace(/_?\(?圧縮\)?|\(画面表示\)/g, "");
 }
 
 function extractExpressionId(face: string) {

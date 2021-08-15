@@ -29,65 +29,65 @@ export async function* getModelPaths({ resource }: { resource: string }) {
 }
 
 export function getModelDirectoryPath(
-  modelId: string,
+  charaId: string,
   { resource }: { resource: string },
 ) {
-  return joinPath(resource, ...live2dPath, modelId);
+  return joinPath(resource, ...live2dPath, charaId);
 }
 
 export function getModelPath(
-  modelId: string,
+  charaId: string,
   { resource, basename }: { resource: string; basename: string },
 ) {
   return joinPath(
-    getModelDirectoryPath(modelId, { resource }),
+    getModelDirectoryPath(charaId, { resource }),
     `${basename}${modelFileExtension}`,
   );
 }
 
-export async function* getModelIds({ resource }: { resource: string }) {
+export async function* getCharaIds({ resource }: { resource: string }) {
   for await (const path of getModelPaths({ resource })) {
     yield basenameOf(dirnameOf(path));
   }
 }
 
 export async function getModel(
-  modelId: string,
+  charaId: string,
   { resource, basename = modelFileBasename }: {
     resource: string;
     basename?: string;
   },
 ) {
-  const path = getModelPath(modelId, { resource, basename });
+  const path = getModelPath(charaId, { resource, basename });
   const json = await Deno.readTextFile(path);
   const model = JSON.parse(json);
   return modelSchema.parse(model);
 }
 
 export async function setModel(
-  modelId: string,
+  charaId: string,
   model: Model,
   { resource, basename }: { resource: string; basename: string },
 ) {
-  const path = getModelPath(modelId, { resource, basename });
+  const path = getModelPath(charaId, { resource, basename });
   const json = JSON.stringify(model, null, "\t");
   await Deno.writeTextFile(path, json);
 }
 
-export async function getModelName(
-  modelId: string,
+export async function getCharaName(
+  charaId: string,
   { resource }: { resource: string },
 ) {
-  const param = await getParam(modelId, { resource }).catch((_) => undefined);
+  const param = await getParam(charaId, { resource }).catch((_) => undefined);
   return param?.charaName;
 }
 
 export async function getParam(
-  modelId: string,
+  charaId: string,
   { resource }: { resource: string },
 ) {
   const path = joinPath(
-    getModelDirectoryPath(modelId, { resource }),
+    getModelDirectoryPath(charaId, { resource }),
     paramFileName,
   );
   const json = await Deno.readTextFile(path);
