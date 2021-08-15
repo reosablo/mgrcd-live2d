@@ -22,14 +22,14 @@ import {
 } from "../_internal/config.ts";
 import {
   buildStoryEntryCommand,
-  getCharaIds,
   getMotion,
+  getRoleIds,
   installMotion,
   installParam,
   installScenario,
 } from "../_internal/install.ts";
 
-const castParameterPattern = /^(?<charaId>\d{6})=(?<modelId>\d{6})$/;
+const castParameterPattern = /^(?<roleId>\d{6})=(?<modelId>\d{6})$/;
 const targetParameterPattern = /^(?<target>\d{6})$/;
 
 export const command = new Command<void>()
@@ -49,7 +49,7 @@ export const command = new Command<void>()
   )
   .option<{ cast?: string[] }>(
     "--cast [cast:string]",
-    "Change chara id => model id mapping",
+    "Change role id => model id mapping",
     {
       collect: true,
       value: (arg: string, cast: string[] = []) => {
@@ -85,8 +85,8 @@ export const command = new Command<void>()
         targets = modelIds;
       }
       const baseCast = new Map(castArgs.map((arg) => {
-        const { charaId, modelId } = arg.match(castParameterPattern)!.groups!;
-        return [+charaId, +modelId] as const;
+        const { roleId, modelId } = arg.match(castParameterPattern)!.groups!;
+        return [+roleId, +modelId] as const;
       }));
       await Promise.allSettled(targets.map(async (target) => {
         const familyId = target.replace(/.{2}$/, "00");
@@ -123,21 +123,19 @@ export const command = new Command<void>()
         };
         const resolver = new Resolver(
           scenarioId,
-          { cast: (charaId) => `${cast.get(charaId) ?? charaId}` },
+          { cast: (roleId) => `${cast.get(roleId) ?? roleId}` },
         );
-        const charaIds = [...getCharaIds(filteredScenario)]
-          .filter((charaId) =>
-            charaId !== undefined && charaId > 0
-          ) as number[];
-        for (const charaId of charaIds) {
-          const modelId = `${cast.get(charaId) ?? charaId}`;
+        const roleIds = [...getRoleIds(filteredScenario)]
+          .filter((roleId) => roleId !== undefined && roleId > 0) as number[];
+        for (const roleId of roleIds) {
+          const modelId = `${cast.get(roleId) ?? roleId}`;
           const [model, param] = await Promise.all([
             getModel(modelId, { resource }).catch((_) => undefined),
             getParam(modelId, { resource }).catch((_) => undefined),
           ]);
           if (model === undefined) {
             console.log(
-              `Skipped because model not found: ${modelId} (charaId=${charaId})`,
+              `Skipped because model not found: ${modelId} (roleId=${roleId})`,
             );
             continue;
           }
@@ -154,13 +152,13 @@ export const command = new Command<void>()
               0,
             );
             motion.Command = buildStoryEntryCommand(
-              charaId,
-              charaIds,
+              roleId,
+              roleIds,
               storyMotionIndex,
               resolver,
             );
           }
-          installScenario(model, filteredScenario, charaId, resolver);
+          installScenario(model, filteredScenario, roleId, resolver);
           if (param !== undefined) {
             installParam(model, {
               ...param,
@@ -168,8 +166,8 @@ export const command = new Command<void>()
             });
           }
           postprocessModel(model);
-          const basename = charaIds.length > 1
-            ? `model-${scenarioId}@${charaId}`
+          const basename = roleIds.length > 1
+            ? `model-${scenarioId}@${roleId}`
             : `model-${scenarioId}`;
           await setModel(modelId, model, { resource, basename });
           const modelPath = getModelPath(modelId, { resource, basename });

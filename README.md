@@ -96,8 +96,8 @@ Generated: /path/to/resource/image_native/live2d_v4/100101/model-100150.model3.j
 
 `100150` in input parameter is a scenario id of Iroha Tamaki (2017 Christmas).
 
-`--cast 100100=100101` describes mapping of chara id in scenario to model id. To
-see all available scenario ids, run `mgrcd-live2d list-chara $scenario_id`.
+`--cast 100100=100101` describes mapping of role id in scenario to model id. To
+see all available scenario ids, run `mgrcd-live2d list-role $scenario_id`.
 
 To be precise, `100101` in the former example is also a scenario id. scenario id
 `100101` doesn't exist so fall back to `100100` and implicitly add parameter

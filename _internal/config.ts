@@ -133,12 +133,12 @@ export const motionEntries = [
 export class Resolver implements ResolverType {
   constructor(
     public readonly scenarioId: string,
-    { cast: _cast }: { cast?: (charaId: number) => string } = {},
+    { cast: _cast }: { cast?: (roleId: number) => string } = {},
   ) {}
 
   getModelId(...args: Parameters<ResolverType["getModelId"]>) {
-    const [charaId] = args;
-    return `${charaId}` as const;
+    const [roleId] = args;
+    return `${roleId}` as const;
   }
 
   getMotionIndex(...args: Parameters<ResolverType["getMotionIndex"]>) {
@@ -148,19 +148,19 @@ export class Resolver implements ResolverType {
         return [`Story#1`, `${storyId}_${sceneIndex + 1}`] as const;
       }
       case "motion": {
-        const [_type, _charaId, motion] = args;
+        const [_type, _roleId, motion] = args;
         return [`Motion#2`, `${motion}`] as const;
       }
       case "voice": {
-        const [_type, _charaId, voice] = args;
+        const [_type, _roleId, voice] = args;
         return [`Voice#3`, voice] as const;
       }
       case "voiceFull": {
-        const [_type, _charaId, voiceFull] = args;
+        const [_type, _roleId, voiceFull] = args;
         return [`VoiceFull#3`, voiceFull] as const;
       }
       case "face": {
-        const [_type, _charaId, face] = args;
+        const [_type, _roleId, face] = args;
         const expressionId = extractExpressionId(face);
         return [
           `Face#4`,
@@ -173,7 +173,7 @@ export class Resolver implements ResolverType {
   getExpressionName(...args: Parameters<ResolverType["getExpressionName"]>) {
     switch (args[0]) {
       case "face": {
-        const [_type, _charaId, face] = args;
+        const [_type, _roleId, face] = args;
         return patchFace(face);
       }
     }
@@ -182,21 +182,21 @@ export class Resolver implements ResolverType {
   getFilePath(...args: Parameters<ResolverType["getFilePath"]>) {
     switch (args[0]) {
       case "motion": {
-        const [_type, _charaId, motion] = args;
+        const [_type, _roleId, motion] = args;
         return `mtn/motion_${
           motion.toString().padStart(3, "0")
         }.motion3.json` as const;
       }
       case "face": {
-        const [_type, _charaId, face] = args;
+        const [_type, _roleId, face] = args;
         return `exp/${patchFace(face)}` as const;
       }
       case "voice": {
-        const [_type, _charaId, voice] = args;
+        const [_type, _roleId, voice] = args;
         return `../../../sound_native/voice/${voice}_hca.mp3` as const;
       }
       case "voiceFull": {
-        const [_type, _charaId, voiceFull] = args;
+        const [_type, _roleId, voiceFull] = args;
         return `../../../sound_native/${voiceFull}_hca.mp3` as const;
       }
     }

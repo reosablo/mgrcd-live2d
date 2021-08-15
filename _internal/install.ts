@@ -11,7 +11,7 @@ const motionReferencePattern = /^(?<motionGroupName>.*?)(:(?<motionName>.*))?$/;
 export function installScenario(
   model: Model,
   scenario: Scenario,
-  charaId: number,
+  roleId: number,
   resolver: Resolver,
 ) {
   model.FileReferences.Motions ??= {};
@@ -27,9 +27,9 @@ export function installScenario(
         ? scene.autoTurnFirst * 1000
         : undefined;
       const actions = scene.chara ?? [];
-      const command = buildCommand(charaId, actions, resolver);
-      const text = buildText(charaId, actions, resolver);
-      installDependencies(model, charaId, actions, resolver);
+      const command = buildCommand(roleId, actions, resolver);
+      const text = buildText(roleId, actions, resolver);
+      installDependencies(model, roleId, actions, resolver);
       installMotion(model, motionGroupName, {
         Name: motionName,
         MotionDuration: motionDuration,
@@ -41,14 +41,14 @@ export function installScenario(
   }
 }
 
-export function* getCharaIds(scenario: Scenario) {
-  const charaIds = new Set<number | undefined>();
+export function* getRoleIds(scenario: Scenario) {
+  const roleIds = new Set<number | undefined>();
   for (const story of Object.values(scenario.story ?? {})) {
     for (const scene of story) {
-      for (const { id: charaId } of scene.chara ?? []) {
-        if (!charaIds.has(charaId)) {
-          yield charaId;
-          charaIds.add(charaId);
+      for (const { id: roleId } of scene.chara ?? []) {
+        if (!roleIds.has(roleId)) {
+          yield roleId;
+          roleIds.add(roleId);
         }
       }
     }
@@ -159,65 +159,65 @@ export function installParam(model: Model, param: Param) {
 }
 
 export function buildStoryEntryCommand(
-  charaId: number,
-  charaIds: Iterable<number | undefined>,
+  roleId: number,
+  roleIds: Iterable<number | undefined>,
   motionIndex: MotionIndex,
   resolver: Resolver,
 ) {
   const motionRef = stringifyMotionIndex(motionIndex);
   const commands = [`start_mtn ${motionRef}`];
   const { getModelId } = resolver;
-  for (const cid of charaIds) {
-    if (cid === charaId || cid === undefined) {
+  for (const rid of roleIds) {
+    if (rid === roleId || rid === undefined) {
       continue;
     }
-    commands.push(`start_mtn ${getModelId(cid)} ${motionRef}`);
+    commands.push(`start_mtn ${getModelId(rid)} ${motionRef}`);
   }
   return commands.join(";");
 }
 
 export type Resolver = {
-  getModelId(charaId: number): string;
+  getModelId(roleId: number): string;
 
   getMotionIndex(
     ...args:
       | [type: "scene", storyId: string, sceneIndex: number]
-      | [type: "motion", charaId: number | undefined, motion: number]
-      | [type: "voice", charaId: number | undefined, voice: string]
-      | [type: "voiceFull", charaId: number | undefined, voiceFull: string]
-      | [type: "face", charaId: number | undefined, face: string]
+      | [type: "motion", roleId: number | undefined, motion: number]
+      | [type: "voice", roleId: number | undefined, voice: string]
+      | [type: "voiceFull", roleId: number | undefined, voiceFull: string]
+      | [type: "face", roleId: number | undefined, face: string]
   ): MotionIndex;
 
   getExpressionName(
-    ...args: [type: "face", charaId: number | undefined, face: string]
+    ...args: [type: "face", roleId: number | undefined, face: string]
   ): string;
 
   getFilePath(
     ...args:
-      | [type: "motion", charaId: number | undefined, motion: number]
-      | [type: "voice", charaId: number | undefined, voice: string]
-      | [type: "voiceFull", charaId: number | undefined, voiceFull: string]
-      | [type: "face", charaId: number | undefined, face: string]
+      | [type: "motion", roleId: number | undefined, motion: number]
+      | [type: "voice", roleId: number | undefined, voice: string]
+      | [type: "voiceFull", roleId: number | undefined, voiceFull: string]
+      | [type: "face", roleId: number | undefined, face: string]
   ): string;
 };
 
 function installDependencies(
   model: Model,
-  charaId: number,
+  roleId: number,
   actions: Iterable<Action>,
   resolver: Resolver,
 ) {
   const { getMotionIndex, getFilePath, getExpressionName } = resolver;
   for (const action of actions) {
-    if (action.id !== charaId) {
+    if (action.id !== roleId) {
       continue;
     }
     const { motion, face, voice } = action;
     if (motion !== undefined) {
-      const motionIndex = getMotionIndex("motion", charaId, motion);
+      const motionIndex = getMotionIndex("motion", roleId, motion);
       if (!isMotionInstalled(model, motionIndex)) {
         const [motionGroupName, motionName] = motionIndex;
-        const filePath = getFilePath("motion", charaId, motion);
+        const filePath = getFilePath("motion", roleId, motion);
         if (motion < 100) {
           const loopMotionName = `${motionName}_loop`;
           const nextMotion = [motionGroupName, `${motionName}_loop`].join(":");
@@ -245,8 +245,8 @@ function installDependencies(
       }
     }
     if (face !== undefined) {
-      const motionIndex = getMotionIndex("face", charaId, face);
-      const expressionName = getExpressionName("face", charaId, face);
+      const motionIndex = getMotionIndex("face", roleId, face);
+      const expressionName = getExpressionName("face", roleId, face);
       if (!isMotionInstalled(model, motionIndex)) {
         const [motionGroupName, motionName] = motionIndex;
         installMotion(model, motionGroupName, {
@@ -255,7 +255,7 @@ function installDependencies(
         });
       }
       if (!isExpressionInstalled(model, expressionName)) {
-        const filePath = getFilePath("face", charaId, face);
+        const filePath = getFilePath("face", roleId, face);
         installExpression(model, {
           Name: expressionName,
           File: filePath,
@@ -263,10 +263,10 @@ function installDependencies(
       }
     }
     if (voice !== undefined) {
-      const motionIndex = getMotionIndex("voice", charaId, voice);
+      const motionIndex = getMotionIndex("voice", roleId, voice);
       if (!isMotionInstalled(model, motionIndex)) {
         const [motionGroupName, motionName] = motionIndex;
-        const filePath = getFilePath("voice", charaId, voice);
+        const filePath = getFilePath("voice", roleId, voice);
         installMotion(model, motionGroupName, {
           Name: motionName,
           Sound: filePath,
@@ -277,14 +277,14 @@ function installDependencies(
 }
 
 function buildCommand(
-  charaId: number,
+  roleId: number,
   actions: Iterable<Action>,
   resolver: Resolver,
 ) {
   const commands = ["parameters unlock"];
   const { getMotionIndex } = resolver;
   for (const action of actions) {
-    if (action.id !== charaId) {
+    if (action.id !== roleId) {
       continue;
     }
     const {
@@ -299,15 +299,15 @@ function buildCommand(
       textHomeStatus,
     } = action;
     if (motion !== undefined) {
-      const motionIndex = getMotionIndex("motion", charaId, motion);
+      const motionIndex = getMotionIndex("motion", roleId, motion);
       commands.push(`start_mtn ${stringifyMotionIndex(motionIndex)}`);
     }
     if (face !== undefined) {
-      const motionIndex = getMotionIndex("face", charaId, face);
+      const motionIndex = getMotionIndex("face", roleId, face);
       commands.push(`start_mtn ${stringifyMotionIndex(motionIndex)}`);
     }
     if (voice !== undefined) {
-      const motionIndex = getMotionIndex("voice", charaId, voice);
+      const motionIndex = getMotionIndex("voice", roleId, voice);
       commands.push(`start_mtn ${stringifyMotionIndex(motionIndex)}`);
     }
     if (lipSynch !== undefined) {
@@ -336,14 +336,14 @@ function buildCommand(
 }
 
 function buildText(
-  charaId: number,
+  roleId: number,
   actions: Iterable<Action>,
   _resolver: Resolver,
 ) {
   const texts = [] as string[];
   for (const action of actions) {
     const { id, textHome } = action;
-    if (id !== charaId) {
+    if (id !== roleId) {
       continue;
     }
     if (textHome !== undefined) {
