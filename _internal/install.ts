@@ -15,13 +15,12 @@ export function installScenario(
   resolver: Resolver,
 ) {
   model.FileReferences.Motions ??= {};
-  const { getMotionIndex } = resolver;
   for (const [storyId, story] of Object.entries(scenario.story ?? {})) {
     for (const [sceneIndex, scene] of story.entries()) {
-      const motionIndex = getMotionIndex("scene", storyId, sceneIndex);
+      const motionIndex = resolver.getMotionIndex("scene", storyId, sceneIndex);
       const [motionGroupName, motionName] = motionIndex;
       const nextMotion = sceneIndex + 1 < story.length
-        ? getMotionIndex("scene", storyId, sceneIndex + 1).join(":")
+        ? resolver.getMotionIndex("scene", storyId, sceneIndex + 1).join(":")
         : undefined;
       const motionDuration = scene.autoTurnFirst !== undefined
         ? scene.autoTurnFirst * 1000
@@ -41,12 +40,13 @@ export function installScenario(
   }
 }
 
-export function* getRoleIds(scenario: Scenario) {
+export function* getRoleIds(scenario: Scenario, resolver: Resolver) {
   const roleIds = new Set<number | undefined>();
   for (const story of Object.values(scenario.story ?? {})) {
     for (const scene of story) {
-      for (const { id: roleId } of scene.chara ?? []) {
-        if (!roleIds.has(roleId)) {
+      for (const action of scene.chara ?? []) {
+        const roleId = resolver.getRoleId(action.id);
+        if (!roleIds.has(roleId) && roleId !== undefined) {
           yield roleId;
           roleIds.add(roleId);
         }
@@ -166,17 +166,18 @@ export function buildStoryEntryCommand(
 ) {
   const motionRef = stringifyMotionIndex(motionIndex);
   const commands = [`start_mtn ${motionRef}`];
-  const { getModelId } = resolver;
   for (const rid of roleIds) {
     if (rid === roleId || rid === undefined) {
       continue;
     }
-    commands.push(`start_mtn ${getModelId(rid)} ${motionRef}`);
+    commands.push(`start_mtn ${resolver.getModelId(rid)} ${motionRef}`);
   }
   return commands.join(";");
 }
 
 export type Resolver = {
+  getRoleId(actorId: number | undefined): number | undefined;
+
   getModelId(roleId: number): string;
 
   getMotionIndex(
@@ -207,17 +208,16 @@ function installDependencies(
   actions: Iterable<Action>,
   resolver: Resolver,
 ) {
-  const { getMotionIndex, getFilePath, getExpressionName } = resolver;
   for (const action of actions) {
-    if (action.id !== roleId) {
+    if (resolver.getRoleId(action.id) !== roleId) {
       continue;
     }
     const { motion, face, voice } = action;
     if (motion !== undefined) {
-      const motionIndex = getMotionIndex("motion", roleId, motion);
+      const motionIndex = resolver.getMotionIndex("motion", roleId, motion);
       if (!isMotionInstalled(model, motionIndex)) {
         const [motionGroupName, motionName] = motionIndex;
-        const filePath = getFilePath("motion", roleId, motion);
+        const filePath = resolver.getFilePath("motion", roleId, motion);
         if (motion < 100) {
           const loopMotionName = `${motionName}_loop`;
           const nextMotion = [motionGroupName, `${motionName}_loop`].join(":");
@@ -245,8 +245,8 @@ function installDependencies(
       }
     }
     if (face !== undefined) {
-      const motionIndex = getMotionIndex("face", roleId, face);
-      const expressionName = getExpressionName("face", roleId, face);
+      const motionIndex = resolver.getMotionIndex("face", roleId, face);
+      const expressionName = resolver.getExpressionName("face", roleId, face);
       if (!isMotionInstalled(model, motionIndex)) {
         const [motionGroupName, motionName] = motionIndex;
         installMotion(model, motionGroupName, {
@@ -255,7 +255,7 @@ function installDependencies(
         });
       }
       if (!isExpressionInstalled(model, expressionName)) {
-        const filePath = getFilePath("face", roleId, face);
+        const filePath = resolver.getFilePath("face", roleId, face);
         installExpression(model, {
           Name: expressionName,
           File: filePath,
@@ -263,10 +263,10 @@ function installDependencies(
       }
     }
     if (voice !== undefined) {
-      const motionIndex = getMotionIndex("voice", roleId, voice);
+      const motionIndex = resolver.getMotionIndex("voice", roleId, voice);
       if (!isMotionInstalled(model, motionIndex)) {
         const [motionGroupName, motionName] = motionIndex;
-        const filePath = getFilePath("voice", roleId, voice);
+        const filePath = resolver.getFilePath("voice", roleId, voice);
         installMotion(model, motionGroupName, {
           Name: motionName,
           Sound: filePath,
@@ -282,9 +282,8 @@ function buildCommand(
   resolver: Resolver,
 ) {
   const commands = ["parameters unlock"];
-  const { getMotionIndex } = resolver;
   for (const action of actions) {
-    if (action.id !== roleId) {
+    if (resolver.getRoleId(action.id) !== roleId) {
       continue;
     }
     const {
@@ -299,15 +298,15 @@ function buildCommand(
       textHomeStatus,
     } = action;
     if (motion !== undefined) {
-      const motionIndex = getMotionIndex("motion", roleId, motion);
+      const motionIndex = resolver.getMotionIndex("motion", roleId, motion);
       commands.push(`start_mtn ${stringifyMotionIndex(motionIndex)}`);
     }
     if (face !== undefined) {
-      const motionIndex = getMotionIndex("face", roleId, face);
+      const motionIndex = resolver.getMotionIndex("face", roleId, face);
       commands.push(`start_mtn ${stringifyMotionIndex(motionIndex)}`);
     }
     if (voice !== undefined) {
-      const motionIndex = getMotionIndex("voice", roleId, voice);
+      const motionIndex = resolver.getMotionIndex("voice", roleId, voice);
       commands.push(`start_mtn ${stringifyMotionIndex(motionIndex)}`);
     }
     if (lipSynch !== undefined) {
@@ -338,14 +337,14 @@ function buildCommand(
 function buildText(
   roleId: number,
   actions: Iterable<Action>,
-  _resolver: Resolver,
+  resolver: Resolver,
 ) {
   const texts = [] as string[];
   for (const action of actions) {
-    const { id, textHome } = action;
-    if (id !== roleId) {
+    if (resolver.getRoleId(action.id) !== roleId) {
       continue;
     }
+    const { textHome } = action;
     if (textHome !== undefined) {
       const text = textHome
         .replace(/\[.*?\]/g, "")

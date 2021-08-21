@@ -1,5 +1,6 @@
 import type { Resolver as ResolverType } from "./install.ts";
 import type { Model } from "../zod-schemas/Live2DViewerEX/model.model3.ts";
+import { Scenario } from "../zod-schemas/magireco/scenario.ts";
 
 export const presetMotions = [
   ["Start", {
@@ -131,10 +132,28 @@ export const motionEntries = [
 ] as const;
 
 export class Resolver implements ResolverType {
+  private readonly familyId: number | undefined;
+
   constructor(
-    public readonly scenarioId: string,
+    private readonly scenarioId: string,
     { cast: _cast }: { cast?: (roleId: number) => string } = {},
-  ) {}
+  ) {
+    if (/^\d{6}$/.test(scenarioId)) {
+      this.familyId = +scenarioId.replace(/.{2}$/, "00");
+    }
+  }
+
+  getRoleId(...args: Parameters<ResolverType["getRoleId"]>) {
+    const [actorId] = args;
+    if (actorId === undefined || actorId === 0) {
+      return undefined;
+    }
+    const { scenarioId, familyId } = this;
+    if (actorId === familyId) {
+      return +scenarioId;
+    }
+    return actorId;
+  }
 
   getModelId(...args: Parameters<ResolverType["getModelId"]>) {
     const [roleId] = args;
@@ -217,6 +236,37 @@ export function postprocessModel(model: Model) {
 
 export function patchCharaName(charaName: string) {
   return charaName.trim().replace(/_?\(?圧縮\)?|\(画面表示\)/g, "");
+}
+
+export function patchScenario(scenario: Scenario, scenarioId: string) {
+  // Karin Misono episode_1
+  if (/^1012\d\d$/.test(scenarioId)) {
+    const action = scenario.story?.group_2?.[1]?.chara?.[0];
+    if (action?.id === 101201) {
+      delete action.id;
+    }
+  }
+  // Ayame Mikuri talk_3
+  if (scenarioId === "350303") {
+    const action = scenario.story?.group_27?.[2]?.chara?.[0];
+    if (action?.id === 305303) {
+      delete action.id;
+    }
+  }
+  // Darc (School uniform) talk_6
+  if (scenarioId === "402150") {
+    const actions = scenario.story?.group_30?.[0]?.chara;
+    if (actions?.at(-1)?.id === 0) {
+      actions.pop();
+    }
+  }
+  // Tsubasa Hanekawa episode_2
+  if (/^4045\d\d$/.test(scenarioId)) {
+    const action = scenario.story?.group_3?.[1]?.chara?.[0];
+    if (action?.id === 100100) {
+      delete action.id;
+    }
+  }
 }
 
 function extractExpressionId(face: string) {

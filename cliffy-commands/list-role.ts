@@ -3,7 +3,11 @@ import {
   ValidationError,
 } from "https://deno.land/x/cliffy@v0.19.4/command/mod.ts";
 import { getCharaName, getScenario } from "../_internal/io.ts";
-import { patchCharaName } from "../_internal/config.ts";
+import {
+  patchCharaName,
+  patchScenario,
+  Resolver,
+} from "../_internal/config.ts";
 import { getRoleIds } from "../_internal/install.ts";
 
 const scenarioIdPattern = /^(?<target>\d{6})$/;
@@ -32,7 +36,9 @@ export const command = new Command<void>()
     } catch {
       throw new ValidationError(`scenario not found: ${scenarioId}`);
     }
-    const roleIds = [...getRoleIds(scenario)].sort((a, b) =>
+    patchScenario(scenario, scenarioId);
+    const resolver = new Resolver(scenarioId);
+    const roleIds = [...getRoleIds(scenario, resolver)].sort((a, b) =>
       a === undefined ? 1 : b === undefined ? -1 : a - b
     );
     for (const roleId of roleIds) {

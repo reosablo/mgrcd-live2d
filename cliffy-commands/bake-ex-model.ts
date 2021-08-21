@@ -15,6 +15,7 @@ import {
 import {
   motionEntries,
   patchCharaName,
+  patchScenario,
   postprocessModel,
   preprocessModel,
   presetMotions,
@@ -107,6 +108,7 @@ export const command = new Command<void>()
           console.log(`Skipped because scenario not found: ${target}`);
           return;
         }
+        patchScenario(scenario, scenarioId);
         const cast = baseCast.has(+familyId) ? baseCast : new Map(baseCast).set(
           +familyId,
           baseCast.get(+target) ?? +target,
@@ -125,7 +127,7 @@ export const command = new Command<void>()
           scenarioId,
           { cast: (roleId) => `${cast.get(roleId) ?? roleId}` },
         );
-        const roleIds = [...getRoleIds(filteredScenario)]
+        const roleIds = [...getRoleIds(filteredScenario, resolver)]
           .filter((roleId) => roleId !== undefined && roleId > 0) as number[];
         for (const roleId of roleIds) {
           const charaId = `${cast.get(roleId) ?? roleId}`;
