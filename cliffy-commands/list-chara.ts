@@ -1,5 +1,12 @@
-import { Command } from "https://deno.land/x/cliffy@v0.19.5/command/mod.ts";
-import { getCharaIds, getCharaName } from "../_internal/io.ts";
+import {
+  Command,
+  ValidationError,
+} from "https://deno.land/x/cliffy@v0.19.5/command/mod.ts";
+import {
+  getCharaIds,
+  getCharaName,
+  validateResourceDirectory,
+} from "../_internal/io.ts";
 import { patchCharaName } from "../_internal/config.ts";
 
 export const command = new Command<void>()
@@ -18,6 +25,16 @@ export const command = new Command<void>()
     "Output with names",
     { default: true },
   ).action(async ({ resource = ".", detailed }) => {
+    try {
+      await validateResourceDirectory(resource);
+    } catch (error) {
+      if (typeof error === "string") {
+        throw new ValidationError(
+          `resource data directory path invalid: ${error} not found`,
+        );
+      }
+      throw error;
+    }
     for await (const charaId of getCharaIds({ resource })) {
       if (detailed) {
         const name = await getCharaName(charaId, { resource });

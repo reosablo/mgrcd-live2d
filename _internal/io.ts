@@ -1,7 +1,9 @@
 import {
   basename as basenameOf,
   dirname as dirnameOf,
+  isAbsolute as isAbsolutePath,
   join as joinPath,
+  sep,
 } from "https://deno.land/std@0.100.0/path/mod.ts";
 import { expandGlob } from "https://deno.land/std@0.100.0/fs/mod.ts";
 import { parse as parseHjson } from "https://deno.land/x/hjson_deno@v1.0.1/mod.ts";
@@ -120,4 +122,20 @@ export async function* getScenarioIds({ resource }: { resource: string }) {
   for await (const path of getScenarioPaths({ resource })) {
     yield basenameOf(path, ".json");
   }
+}
+
+export async function validateResourceDirectory(resource: string) {
+  const paths = ["image_native/live2d_v4", "scenario/json/general"];
+  await Promise.all(
+    paths.map(async (path) => {
+      const fullPath = joinPath(resource, path);
+      try {
+        if (!(await Deno.stat(fullPath)).isDirectory) {
+          throw null;
+        }
+      } catch {
+        throw isAbsolutePath(fullPath) ? fullPath : `.${sep}${fullPath}`;
+      }
+    }),
+  );
 }

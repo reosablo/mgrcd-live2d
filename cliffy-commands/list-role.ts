@@ -2,7 +2,11 @@ import {
   Command,
   ValidationError,
 } from "https://deno.land/x/cliffy@v0.19.5/command/mod.ts";
-import { getCharaName, getScenario } from "../_internal/io.ts";
+import {
+  getCharaName,
+  getScenario,
+  validateResourceDirectory,
+} from "../_internal/io.ts";
 import {
   patchCharaName,
   patchScenario,
@@ -29,6 +33,16 @@ export const command = new Command<void>()
     "Output with names",
     { default: true },
   ).action(async ({ resource = ".", detailed }, scenarioId) => {
+    try {
+      await validateResourceDirectory(resource);
+    } catch (error) {
+      if (typeof error === "string") {
+        throw new ValidationError(
+          `resource data directory path invalid: ${error} not found`,
+        );
+      }
+      throw error;
+    }
     if (!scenarioIdPattern.test(scenarioId)) {
       throw new ValidationError(
         `positional parameters must match ${scenarioIdPattern}: "${scenarioId}"`,

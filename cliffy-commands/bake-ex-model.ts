@@ -11,6 +11,7 @@ import {
   getParam,
   getScenario,
   setModel,
+  validateResourceDirectory,
 } from "../_internal/io.ts";
 import {
   motionEntries,
@@ -69,6 +70,16 @@ export const command = new Command<void>()
   )
   .action(
     async ({ resource = ".", all, cast: castArgs = [] }, targetArgs = []) => {
+      try {
+        await validateResourceDirectory(resource);
+      } catch (error) {
+        if (typeof error === "string") {
+          throw new ValidationError(
+            `resource data directory path invalid: ${error} not found`,
+          );
+        }
+        throw error;
+      }
       let targets = [...targetArgs.reduce((targetArgs, targetArg) => {
         if (!targetParameterPattern.test(targetArg)) {
           throw new ValidationError(
