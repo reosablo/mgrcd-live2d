@@ -69,15 +69,23 @@ appeared or are tapped.
 ### Install
 
 ```sh
-$ deno install -n mgrcd-live2d --allow-read --allow-write --unstable https://ghcdn.rawgit.org/reosablo/mgrcd-live2d/main/cli.ts
+$ deno install -n mgrcd-live2d --allow-read --allow-write --allow-env --unstable https://ghcdn.rawgit.org/reosablo/mgrcd-live2d/main/cli.ts
 ```
 
+note: `--allow-env=MGRCD_RESOURCE` doesn't work for now.
+
 ### Generate Live2D models
+
+Environment variable `MGRCD_RESOURCE` needs to be set to run each example.
+
+```sh
+$ export MGRCD_RESOURCE=/path/to/resource
+```
 
 #### Generate Iroha Tamaki (School Uniform) model
 
 ```sh
-$ mgrcd-live2d bake-ex-model 100101 --resource /path/to/resource
+$ mgrcd-live2d bake-ex-model 100101
 Generated: /path/to/resource/image_native/live2d_v4/100101/model-100100.model3.json
 ```
 
@@ -90,7 +98,7 @@ To see all available scenario ids, run `mgrcd-live2d list-scenario`.
 #### Generate Iroha Tamaki (School Uniform) model behaves like Christmas 2017 version
 
 ```sh
-$ mgrcd-live2d bake-ex-model 100150 --cast 100150=100101 --resource /path/to/resource
+$ mgrcd-live2d bake-ex-model 100150 --cast 100150=100101
 Generated: /path/to/resource/image_native/live2d_v4/100101/model-100150.model3.json
 ```
 
@@ -106,7 +114,7 @@ like `--cast 100100=100101`.
 #### Generate all models
 
 ```sh
-$ mgrcd-live2d bake-ex-model --all --resource /path/to/resource
+$ mgrcd-live2d bake-ex-model --all
 Generated: /path/to/resource/image_native/live2d_v4/100100/model-100100.model3.json
 Generated: /path/to/resource/image_native/live2d_v4/100101/model-100100.model3.json
 ...

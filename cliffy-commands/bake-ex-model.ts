@@ -1,7 +1,7 @@
 import {
   Command,
   ValidationError,
-} from "https://deno.land/x/cliffy@v0.19.4/command/mod.ts";
+} from "https://deno.land/x/cliffy@v0.19.5/command/mod.ts";
 import { getStoryId } from "../data/magireco/general-scenario.ts";
 import type { Scenario } from "../zod-schemas/magireco/scenario.ts";
 import {
@@ -38,10 +38,14 @@ export const command = new Command<void>()
     "Generate standalone Live2D models for Live2DViewerEX from magireco data",
   )
   .arguments<[string[]]>("[...target:string]")
-  .option<{ resource: string }>(
+  .env<{ resource?: string }>(
+    "MGRCD_RESOURCE=<path:string>",
+    "magireco resource data directory path",
+    { prefix: "MGRCD_" },
+  )
+  .option<{ resource?: string }>(
     "--resource <path:string>",
     "magireco resource data directory path",
-    { default: "." },
   )
   .option<{ all: boolean }>(
     "--all [all:boolean]",
@@ -64,7 +68,7 @@ export const command = new Command<void>()
     },
   )
   .action(
-    async ({ resource, all, cast: castArgs = [] }, targetArgs = []) => {
+    async ({ resource = ".", all, cast: castArgs = [] }, targetArgs = []) => {
       let targets = [...targetArgs.reduce((targetArgs, targetArg) => {
         if (!targetParameterPattern.test(targetArg)) {
           throw new ValidationError(

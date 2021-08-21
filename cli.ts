@@ -1,4 +1,4 @@
-import { Command } from "https://deno.land/x/cliffy@v0.19.4/command/mod.ts";
+import { Command } from "https://deno.land/x/cliffy@v0.19.5/command/mod.ts";
 import { command as bakeExModelCommand } from "./cliffy-commands/bake-ex-model.ts";
 import { command as listRoleCommand } from "./cliffy-commands/list-role.ts";
 import { command as listCharaCommand } from "./cliffy-commands/list-chara.ts";

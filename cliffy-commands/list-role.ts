@@ -1,7 +1,7 @@
 import {
   Command,
   ValidationError,
-} from "https://deno.land/x/cliffy@v0.19.4/command/mod.ts";
+} from "https://deno.land/x/cliffy@v0.19.5/command/mod.ts";
 import { getCharaName, getScenario } from "../_internal/io.ts";
 import {
   patchCharaName,
@@ -15,16 +15,20 @@ const scenarioIdPattern = /^(?<target>\d{6})$/;
 export const command = new Command<void>()
   .description("Display charas ids in a specific scenario")
   .arguments<[scenarioId: string]>("<scenario-id>")
-  .option<{ resource: string }>(
+  .env<{ resource?: string }>(
+    "MGRCD_RESOURCE=<path:string>",
+    "magireco resource data directory path",
+    { prefix: "MGRCD_" },
+  )
+  .option<{ resource?: string }>(
     "--resource <path:string>",
     "magireco resource data directory path",
-    { default: "." },
   )
   .option<{ detailed: boolean }>(
     "--detailed [:boolean]",
     "Output with names",
     { default: true },
-  ).action(async ({ resource, detailed }, scenarioId) => {
+  ).action(async ({ resource = ".", detailed }, scenarioId) => {
     if (!scenarioIdPattern.test(scenarioId)) {
       throw new ValidationError(
         `positional parameters must match ${scenarioIdPattern}: "${scenarioId}"`,
