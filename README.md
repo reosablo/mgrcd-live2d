@@ -90,7 +90,7 @@ To see all available scenario ids, run `mgrcd-live2d list-scenario`.
 #### Generate Iroha Tamaki (School Uniform) model behaves like Christmas 2017 version
 
 ```sh
-$ mgrcd-live2d bake-ex-model 100150 --cast 100100=100101 --resource /path/to/resource
+$ mgrcd-live2d bake-ex-model 100150 --cast 100150=100101 --resource /path/to/resource
 Generated: /path/to/resource/image_native/live2d_v4/100101/model-100150.model3.json
 ```
 
