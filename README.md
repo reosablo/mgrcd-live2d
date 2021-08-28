@@ -69,10 +69,13 @@ appeared or are tapped.
 ### Install
 
 ```sh
-$ deno install -n mgrcd-live2d --allow-read --allow-write --allow-env --unstable https://ghcdn.rawgit.org/reosablo/mgrcd-live2d/main/cli.ts
+$ deno install -fn mgrcd-live2d --allow-read --allow-write --allow-env --allow-run --allow-net --unstable https://ghcdn.rawgit.org/reosablo/mgrcd-live2d/main/cli.ts
 ```
 
-note: `--allow-env=MGRCD_RESOURCE` doesn't work for now.
+- `--allow-env=MGRCD_RESOURCE` doesn't work for now.
+- `--allow-run` and `--allow-net` is required for `upgrade` command.
+- You can upgrade `mgrcd-live2d` without `upgrade` command by running the above
+  command again.
 
 ### Generate Live2D models
 
