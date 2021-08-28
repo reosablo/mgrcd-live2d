@@ -11,6 +11,7 @@ export const controllerSchema = z.object({
 
 export const motionSchema = live2dMotionSchema.extend({
   Name: z.string(),
+  FileLoop: z.boolean(),
   Text: z.string(),
   TextDuration: z.number(),
   MotionDuration: z.number(),

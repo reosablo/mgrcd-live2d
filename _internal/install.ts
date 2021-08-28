@@ -219,21 +219,12 @@ function installDependencies(
         const [motionGroupName, motionName] = motionIndex;
         const filePath = resolver.getFilePath("motion", roleId, motion);
         if (motion < 100) {
-          const loopMotionName = `${motionName}_loop`;
-          const nextMotion = [motionGroupName, `${motionName}_loop`].join(":");
           installMotion(model, motionGroupName, {
             Name: motionName,
             File: filePath,
+            FileLoop: true,
             Command: "eye_blink enforce",
             FadeOut: 0,
-            NextMtn: nextMotion,
-          });
-          installMotion(model, motionGroupName, {
-            Name: loopMotionName,
-            File: filePath,
-            FadeIn: 0,
-            FadeOut: 0,
-            NextMtn: nextMotion,
           });
         } else {
           installMotion(model, motionGroupName, {
