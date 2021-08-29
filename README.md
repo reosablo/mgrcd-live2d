@@ -82,7 +82,13 @@ $ deno install -fn mgrcd-live2d --allow-read --allow-write --allow-env --allow-r
 Environment variable `MGRCD_RESOURCE` needs to be set to run each example.
 
 ```sh
+# posix shell
 $ export MGRCD_RESOURCE=/path/to/resource
+```
+
+```powershell
+# powershell
+$env:MGRCD_RESOURCE = "\path\to\resource"
 ```
 
 #### Generate Iroha Tamaki (School Uniform) model
