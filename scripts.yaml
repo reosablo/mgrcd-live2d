@@ -1,0 +1,7 @@
+scripts:
+  pre-commit:
+    cmd:
+      - deno fmt
+      - deno lint
+      - deno test
+    gitHook: pre-commit
