@@ -120,6 +120,17 @@ To be precise, `100101` in the former example is also a scenario id. scenario id
 `100101` doesn't exist so fall back to `100100` and implicitly add parameter
 like `--cast 100100=100101`.
 
+#### Generate Iroha & Yachiyo (Final Battle ver.)
+
+```sh
+$ mgrcd-live2d bake-ex-model 130100
+Generated: /path/to/resource/image_native/live2d_v4/130100/model-130100@130100.model3.json
+Generated: /path/to/resource/image_native/live2d_v4/130100/model-130100@130102.model3.json
+```
+
+`@130100` and `@130102` in output filename is a role id of scenario `130100`.
+The scenario includes 2 role ids: `130100` and `130102`.
+
 #### Generate all models
 
 ```sh

@@ -301,7 +301,11 @@ function buildCommand(
       commands.push(`start_mtn ${stringifyMotionIndex(motionIndex)}`);
     }
     if (lipSynch !== undefined) {
-      commands.push(`lip_sync ${lipSynch ? "enable" : "disable"}`);
+      if (lipSynch) {
+        commands.push(`unmute_sound 0`);
+      } else {
+        commands.push(`mute_sound 0`);
+      }
     }
     if (cheek !== undefined) {
       commands.push(`parameters lock ParamCheek ${cheek}`);

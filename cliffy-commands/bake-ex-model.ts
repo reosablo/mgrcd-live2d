@@ -182,6 +182,7 @@ export const command = new Command<void>()
               charaName: patchCharaName(param.charaName),
             });
           }
+          (model.Options ??= {}).Id = resolver.getModelId(roleId);
           postprocessModel(model);
           const basename = roleIds.length > 1
             ? `model-${scenarioId}@${roleId}`
