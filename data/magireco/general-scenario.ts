@@ -1,3 +1,5 @@
+import { Scenario } from "../../zod-schemas/magireco/scenario.ts";
+
 export const stories = {
   intro_1: { name: "自己紹介①" },
   intro_2: { name: "自己紹介②" },
@@ -103,56 +105,71 @@ export const playlist = [
   },
 ] as const;
 
-export function getStoryId(scenarioId: string, storyKey: keyof typeof stories) {
-  if (/^\d{6}$/.test(scenarioId)) {
-    return storyMap[storyKey];
+export function getStoryId(
+  _scenarioId: string,
+  scenario: Scenario,
+  storyKey: keyof typeof stories,
+) {
+  const intro2Index =
+    [39, 43].find((index) =>
+      scenario.story?.[`group_${index}`]?.[0]?.chara?.[0].voice?.endsWith("_02")
+    ) ?? 2;
+  let index;
+  if (storyKey === "intro_2") {
+    index = intro2Index;
   } else {
-    return undefined;
+    const patternIndex = storyMap[storyKey];
+    if (patternIndex !== undefined) {
+      index = patternIndex >= 2 && patternIndex <= intro2Index
+        ? patternIndex - 1
+        : patternIndex;
+    }
   }
+  return index !== undefined ? `group_${index}` : undefined;
 }
 
 const storyMap = {
-  intro_1: "group_1",
-  episode_1: "group_2",
-  episode_2: "group_3",
-  episode_3: "group_4",
-  grow: "group_5",
-  grow_max: "group_6",
-  grow_episode: "group_7",
-  grow_release_1: "group_8",
-  grow_release_2: "group_9",
-  grow_release_3: "group_10",
-  grow_magia: "group_11",
-  grow_awake_1: "group_12",
-  grow_awake_2: "group_13",
-  grow_awake_3: "group_14",
-  grow_awake_4: "group_15",
-  greet_first: "group_16",
-  greet_morning: "group_17",
-  greet_day: "group_18",
-  greet_evening: "group_19",
-  greet_night: "group_20",
-  greet: "group_21",
-  greet_ap: "group_22",
-  greet_bp: "group_23",
-  talk_10: "group_24",
-  talk_1: "group_25",
-  talk_2: "group_26",
-  talk_3: "group_27",
-  talk_4: "group_28",
-  talk_5: "group_29",
-  talk_6: "group_30",
-  talk_7: "group_31",
-  talk_8: "group_32",
-  talk_9: "group_33",
-  battle_start: "group_34",
-  battle_win_1: "group_35",
-  battle_win_2: "group_36",
-  battle_win_3: "group_37",
-  battle_win_4: "group_38",
-  magia_1: "group_39",
-  magia_2: "group_40",
-  magia_3: "group_41",
-  magia_4: "group_42",
-  intro_2: "group_43",
-} as { readonly [x in keyof typeof stories]?: `group_${number}` };
+  intro_1: 1,
+  intro_2: 2,
+  episode_1: 3,
+  episode_2: 4,
+  episode_3: 5,
+  grow: 6,
+  grow_max: 7,
+  grow_episode: 8,
+  grow_release_1: 9,
+  grow_release_2: 10,
+  grow_release_3: 11,
+  grow_magia: 12,
+  grow_awake_1: 13,
+  grow_awake_2: 14,
+  grow_awake_3: 15,
+  grow_awake_4: 16,
+  greet_first: 17,
+  greet_morning: 18,
+  greet_day: 19,
+  greet_evening: 20,
+  greet_night: 21,
+  greet: 22,
+  greet_ap: 23,
+  greet_bp: 24,
+  talk_10: 25,
+  talk_1: 26,
+  talk_2: 27,
+  talk_3: 28,
+  talk_4: 29,
+  talk_5: 30,
+  talk_6: 31,
+  talk_7: 32,
+  talk_8: 33,
+  talk_9: 34,
+  battle_start: 35,
+  battle_win_1: 36,
+  battle_win_2: 37,
+  battle_win_3: 38,
+  battle_win_4: 39,
+  magia_1: 40,
+  magia_2: 41,
+  magia_3: 42,
+  magia_4: 43,
+} as { readonly [x in keyof typeof stories]?: number };

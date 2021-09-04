@@ -129,7 +129,7 @@ export const command = new Command<void>()
           baseCast.get(+target) ?? +target,
         );
         const storyIds = motionEntries.map(([_motionIndex, storyId]) =>
-          getStoryId(scenarioId, storyId)
+          getStoryId(scenarioId, scenario, storyId)
         ).filter((storyId) => storyId !== undefined) as string[];
         const filteredScenario = {
           ...scenario,
@@ -162,7 +162,7 @@ export const command = new Command<void>()
           }
           for (const [motionIndex, storyKey] of motionEntries) {
             const motion = getMotion(model, motionIndex)!;
-            const storyId = getStoryId(scenarioId, storyKey)!;
+            const storyId = getStoryId(scenarioId, scenario, storyKey)!;
             const storyMotionIndex = resolver.getMotionIndex(
               "scene",
               storyId,
