@@ -1,6 +1,5 @@
 {
   "deno.enable": true,
-  "deno.config": "./tsconfig.json",
   "deno.lint": true,
   "deno.unstable": true,
   "[json]": {
@@ -14,9 +13,5 @@
   },
   "[typescript]": {
     "editor.defaultFormatter": "denoland.vscode-deno"
-  },
-  "deno.suggest.imports.hosts": {
-    "https://deno.land": true,
-    "https://cdn.skypack.dev": false
   }
 }
