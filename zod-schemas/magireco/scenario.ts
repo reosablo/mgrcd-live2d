@@ -36,8 +36,3 @@ export const scenarioSchema = z.object({
   story: z.object({}).catchall(storySchema),
   version: z.number(),
 }).partial().passthrough();
-
-export type Action = z.infer<typeof actionSchema>;
-export type Scene = z.infer<typeof sceneSchema>;
-export type Story = z.infer<typeof storySchema>;
-export type Scenario = z.infer<typeof scenarioSchema>;

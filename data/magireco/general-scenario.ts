@@ -1,4 +1,4 @@
-import { Scenario } from "../../zod-schemas/magireco/scenario.ts";
+import type { Scenario } from "../../types/magireco/scenario.ts";
 
 export const stories = {
   intro_1: { name: "自己紹介①" },

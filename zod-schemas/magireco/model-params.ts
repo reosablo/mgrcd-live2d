@@ -4,5 +4,3 @@ export const paramSchema = z.object({
   modelScale: z.number().optional(),
   charaName: z.string(),
 });
-
-export type Param = z.infer<typeof paramSchema>;

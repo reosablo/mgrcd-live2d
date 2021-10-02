@@ -1,15 +1,20 @@
+import type { z } from "https://deno.land/x/zod@v3.9.0/mod.ts";
 import type {
   Controller,
   Model,
   Motion,
 } from "../../types/Live2DViewerEX/model.model3.ts";
 import type {
-  Controller as ZodController,
-  Model as ZodModel,
-  Motion as ZodMotion,
+  controllerSchema,
+  modelSchema,
+  motionSchema,
 } from "./model.model3.ts";
 
 type assertExtends<_ extends Type, Type> = never;
+
+type ZodController = z.infer<typeof controllerSchema>;
+type ZodModel = z.infer<typeof modelSchema>;
+type ZodMotion = z.infer<typeof motionSchema>;
 
 type _ =
   & assertExtends<ZodController, Controller>

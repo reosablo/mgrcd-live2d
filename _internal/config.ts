@@ -1,6 +1,6 @@
 import type { Resolver as ResolverType } from "./install.ts";
-import type { Model } from "../zod-schemas/Live2DViewerEX/model.model3.ts";
-import { Scenario } from "../zod-schemas/magireco/scenario.ts";
+import type { Model } from "../types/Live2DViewerEX/model.model3.ts";
+import type { Scenario } from "../types/magireco/scenario.ts";
 
 export const presetMotions = [
   ["Start", {

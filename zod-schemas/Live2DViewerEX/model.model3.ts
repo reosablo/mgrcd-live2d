@@ -64,7 +64,3 @@ export const modelSchema = live2dModelSchema.extend({
     AnisoLevel: z.number(),
   }).partial().optional(),
 }).passthrough();
-
-export type Controller = z.infer<typeof controllerSchema>;
-export type Motion = z.infer<typeof motionSchema>;
-export type Model = z.infer<typeof modelSchema>;

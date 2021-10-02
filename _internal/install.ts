@@ -2,9 +2,9 @@ import type {
   Expression,
   Model,
   Motion,
-} from "../zod-schemas/Live2DViewerEX/model.model3.ts";
-import type { Param } from "../zod-schemas/magireco/model-params.ts";
-import type { Action, Scenario } from "../zod-schemas/magireco/scenario.ts";
+} from "../types/Live2DViewerEX/model.model3.ts";
+import type { Param } from "../types/magireco/model-params.ts";
+import type { Action, Scenario } from "../types/magireco/scenario.ts";
 
 const motionReferencePattern = /^(?<motionGroupName>.*?)(:(?<motionName>.*))?$/;
 

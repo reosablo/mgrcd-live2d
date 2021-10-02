@@ -3,7 +3,7 @@ import {
   ValidationError,
 } from "https://deno.land/x/cliffy@v0.19.5/command/mod.ts";
 import { getStoryId } from "../data/magireco/general-scenario.ts";
-import type { Scenario } from "../zod-schemas/magireco/scenario.ts";
+import type { Scenario } from "../types/magireco/scenario.ts";
 import {
   getCharaIds,
   getModel,

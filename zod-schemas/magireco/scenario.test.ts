@@ -1,3 +1,4 @@
+import type { z } from "https://deno.land/x/zod@v3.9.0/mod.ts";
 import type {
   Action,
   Scenario,
@@ -5,13 +6,18 @@ import type {
   Story,
 } from "../../types/magireco/scenario.ts";
 import type {
-  Action as ZodAction,
-  Scenario as ZodScenario,
-  Scene as ZodScene,
-  Story as ZodStory,
+  actionSchema,
+  scenarioSchema,
+  sceneSchema,
+  storySchema,
 } from "./scenario.ts";
 
 type assertExtends<_ extends Type, Type> = never;
+
+type ZodAction = z.infer<typeof actionSchema>;
+type ZodScenario = z.infer<typeof scenarioSchema>;
+type ZodScene = z.infer<typeof sceneSchema>;
+type ZodStory = z.infer<typeof storySchema>;
 
 type _ =
   & assertExtends<ZodAction, Action>

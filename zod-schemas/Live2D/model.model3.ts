@@ -37,9 +37,3 @@ export const modelSchema = z.object({
   Groups: z.array(groupSchema).optional(),
   HitAreas: z.array(hitAreaSchema).optional(),
 }).passthrough();
-
-export type Motion = z.infer<typeof motionSchema>;
-export type Expression = z.infer<typeof expressionSchema>;
-export type Group = z.infer<typeof groupSchema>;
-export type HitArea = z.infer<typeof hitAreaSchema>;
-export type Model = z.infer<typeof modelSchema>;

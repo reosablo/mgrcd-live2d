@@ -7,11 +7,9 @@ import {
 } from "https://deno.land/std@0.100.0/path/mod.ts";
 import { expandGlob } from "https://deno.land/std@0.100.0/fs/mod.ts";
 import { parse as parseHjson } from "https://deno.land/x/hjson_deno@v1.0.1/mod.ts";
+import type { Model } from "../types/Live2DViewerEX/model.model3.ts";
 import { paramSchema } from "../zod-schemas/magireco/model-params.ts";
-import {
-  Model,
-  modelSchema,
-} from "../zod-schemas/Live2DViewerEX/model.model3.ts";
+import { modelSchema } from "../zod-schemas/Live2DViewerEX/model.model3.ts";
 import { scenarioSchema } from "../zod-schemas/magireco/scenario.ts";
 
 const live2dPath = ["image_native", "live2d_v4"] as const;

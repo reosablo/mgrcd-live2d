@@ -1,4 +1,4 @@
-import type { Motion } from "../zod-schemas/Live2DViewerEX/model.model3.ts";
+import type { Motion } from "../types/Live2DViewerEX/model.model3.ts";
 import type { stories } from "../data/magireco/general-scenario.ts";
 import type { MotionIndex } from "./install.ts";
 import type { motionEntries, presetMotions } from "./config.ts";

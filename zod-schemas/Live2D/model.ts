@@ -28,8 +28,3 @@ export const modelSchema = z.object({
   pose: z.string(),
   hit_areas: z.array(hitAreaSchema),
 }).partial().passthrough();
-
-export type Motion = z.infer<typeof motionSchema>;
-export type Expression = z.infer<typeof expressionSchema>;
-export type HitArea = z.infer<typeof hitAreaSchema>;
-export type Model = z.infer<typeof modelSchema>;
