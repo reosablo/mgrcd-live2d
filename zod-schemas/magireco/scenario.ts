@@ -1,4 +1,4 @@
-import { z } from "https://deno.land/x/zod@v3.7.0/mod.ts";
+import { z } from "https://deno.land/x/zod@v3.9.0/mod.ts";
 
 export const actionSchema = z.object({
   cheek: z.number(),
