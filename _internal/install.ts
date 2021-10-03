@@ -269,7 +269,7 @@ function installDependencies(
 
 function buildCommand(
   roleId: number,
-  actions: Iterable<Action>,
+  actions: Action[],
   resolver: Resolver,
 ) {
   const commands = ["parameters unlock"];
@@ -302,9 +302,16 @@ function buildCommand(
     }
     if (lipSynch !== undefined) {
       if (lipSynch) {
-        commands.push(`unmute_sound 0`);
+        commands.push(`unmute_sound 0`, `lip_sync enable`);
       } else {
-        commands.push(`mute_sound 0`);
+        if (actions.some((action) => action.lipSynch)) {
+          commands.push(`mute_sound 0`);
+        } else {
+          commands.push(
+            `lip_sync disable`,
+            `parameters lock ParamMouthOpenY 0`,
+          );
+        }
       }
     }
     if (cheek !== undefined) {
