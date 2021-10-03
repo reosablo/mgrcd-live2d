@@ -11,7 +11,6 @@ export const command = new UpgradeCommand({
     "--allow-env",
     "--allow-run",
     "--allow-net",
-    "--unstable",
   ],
   provider: new GithubProvider({ repository: "reosablo/mgrcd-live2d" }),
 });

@@ -69,7 +69,7 @@ appeared or are tapped.
 ### Install
 
 ```sh
-$ deno install -fn mgrcd-live2d --allow-read --allow-write --allow-env --allow-run --allow-net --unstable https://ghcdn.rawgit.org/reosablo/mgrcd-live2d/main/cli.ts
+$ deno install -fn mgrcd-live2d --allow-read --allow-write --allow-env --allow-run --allow-net https://ghcdn.rawgit.org/reosablo/mgrcd-live2d/main/cli.ts
 ```
 
 - `--allow-env=MGRCD_RESOURCE` doesn't work for now.
