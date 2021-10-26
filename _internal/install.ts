@@ -158,6 +158,17 @@ export function installParam(model: Model, param: Param) {
   options.ScaleFactor = param.modelScale;
 }
 
+export function uninstallMotion(
+  model: Model,
+  [motionGroupName, motionName]: Required<MotionIndex>,
+) {
+  const motionGroup = model.FileReferences.Motions?.[motionGroupName];
+  const index = motionGroup?.findIndex((motion) => motion.Name === motionName);
+  if (index >= 0) {
+    motionGroup.splice(index, 1);
+  }
+}
+
 export function buildStoryEntryCommand(
   roleId: number,
   roleIds: Iterable<number | undefined>,
