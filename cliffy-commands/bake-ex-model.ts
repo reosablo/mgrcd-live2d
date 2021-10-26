@@ -2,7 +2,10 @@ import {
   Command,
   ValidationError,
 } from "https://deno.land/x/cliffy@v0.19.5/command/mod.ts";
-import { getStoryId } from "../data/magireco/general-scenario.ts";
+import {
+  getStoryId,
+  spoilerStoryKeys,
+} from "../data/magireco/general-scenario.ts";
 import type { Scenario } from "../types/magireco/scenario.ts";
 import {
   getCharaIds,
@@ -14,11 +17,11 @@ import {
   validateResourceDirectory,
 } from "../_internal/io.ts";
 import {
-  motionEntries,
   patchCharaName,
   patchScenario,
   postprocessModel,
   preprocessModel,
+  presetMotionMeta,
   presetMotions,
   Resolver,
 } from "../_internal/config.ts";
@@ -68,8 +71,16 @@ export const command = new Command<void>()
       },
     },
   )
+  .option<{ spoiler: boolean }>(
+    "--spoiler [spoiler:boolean]",
+    "Allow spoilers that doesn't appear in game",
+    { default: false },
+  )
   .action(
-    async ({ resource = ".", all, cast: castArgs = [] }, targetArgs = []) => {
+    async (
+      { resource = ".", all, cast: castArgs = [], spoiler },
+      targetArgs = [],
+    ) => {
       try {
         await validateResourceDirectory(resource);
       } catch (error) {
@@ -128,9 +139,22 @@ export const command = new Command<void>()
           +familyId,
           baseCast.get(+target) ?? +target,
         );
-        const storyIds = motionEntries.map(([_motionIndex, storyId]) =>
-          getStoryId(scenarioId, scenario, storyId)
-        ).filter((storyId) => storyId !== undefined) as string[];
+        const filteredPresetMotions = presetMotions.filter(([_, motion]) =>
+          spoiler ||
+          !spoilerStoryKeys.includes(motion[presetMotionMeta].storyKey)
+        );
+        const motionEntries = filteredPresetMotions.map((
+          [motionGroupName, motion],
+        ) =>
+          [
+            [motionGroupName, motion.Name],
+            motion[presetMotionMeta].storyKey,
+          ] as const
+        );
+        const storyIds = filteredPresetMotions
+          .map(([_, motion]) => motion[presetMotionMeta].storyKey)
+          .map((storyKey) => getStoryId(scenarioId, scenario, storyKey))
+          .filter((storyId) => storyId !== undefined) as string[];
         const filteredScenario = {
           ...scenario,
           story: Object.fromEntries(
@@ -157,8 +181,8 @@ export const command = new Command<void>()
             continue;
           }
           preprocessModel(model);
-          for (const [motionGroupName, motion] of presetMotions) {
-            installMotion(model, motionGroupName, motion);
+          for (const [motionGroupName, motion] of filteredPresetMotions) {
+            installMotion(model, motionGroupName, { ...motion });
           }
           for (const [motionIndex, storyKey] of motionEntries) {
             const motion = getMotion(model, motionIndex)!;

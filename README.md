@@ -46,6 +46,7 @@ appeared or are tapped.
 | tapped   | 魔法少女タップ⑦       | 24+ taps                        |
 | tapped   | 魔法少女タップ⑧       | 32+ taps                        |
 | tapped   | (secret)       | 40+ taps                        |
+| tapped   | (hidden)       | `--spoiler` flag and 48+ taps   |
 
 ## Usage
 

@@ -105,6 +105,8 @@ export const playlist = [
   },
 ] as const;
 
+export const spoilerStoryKeys = ["talk_10"] as (keyof typeof stories)[];
+
 export function getStoryId(
   _scenarioId: string,
   scenario: Scenario,
