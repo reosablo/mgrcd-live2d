@@ -3,5 +3,5 @@ scripts:
     cmd:
       - deno fmt
       - deno lint
-      - deno test
+      - deno test --allow-read=./testdata --allow-write=./testdata
     gitHook: pre-commit

@@ -1,0 +1,37 @@
+{
+  "story": {
+    "group_1": [
+      {
+        "autoTurnFirst": 1.2,
+        "chara": [
+          {
+            "cheek": 1,
+            "eyeClose": 1,
+            "face": "mtn_ex_010.exp.json",
+            "id": 100100,
+            "lipSynch": 1,
+            "motion": 1,
+            "pos": 1,
+            "soulGem": 1,
+            "tear": 1,
+            "textHome": "scenario-100100 group_1",
+            "textHomeStatus": "Clear",
+            "voice": "vo_char_1001_00_01"
+          }
+        ]
+      }
+    ],
+    "group_2": [
+      {
+        "autoTurnFirst": 1.5,
+        "chara": [
+          {
+            "id": 100100,
+            "voice": "vo_char_1001_00_03"
+          }
+        ]
+      }
+    ]
+  },
+  "version": 3
+}

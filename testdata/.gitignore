@@ -1,0 +1,3 @@
+/image_native/live2d_v4/*/*
+!/image_native/live2d_v4/*/model.model3.json
+!/image_native/live2d_v4/*/params.json
