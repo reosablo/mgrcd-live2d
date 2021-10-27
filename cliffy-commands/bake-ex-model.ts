@@ -101,7 +101,7 @@ export const command = new Command<void>()
       }, new Set<string>())];
       if (all) {
         if (targets.length > 0) {
-          console.info(
+          console.warn(
             `target parameters are ignored because --all parameter is specified`,
           );
         }
