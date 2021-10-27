@@ -1,7 +1,7 @@
 import {
   Command,
   ValidationError,
-} from "https://deno.land/x/cliffy@v0.19.5/command/mod.ts";
+} from "https://deno.land/x/cliffy@v0.20.0/command/mod.ts";
 import {
   getCharaName,
   getScenarioIds,
