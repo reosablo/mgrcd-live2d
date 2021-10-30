@@ -1,7 +1,13 @@
 scripts:
   pre-commit:
+    gitHook: pre-commit
     cmd:
       - deno fmt
       - deno lint
-      - deno test --allow-read=./testdata --allow-write=./testdata
-    gitHook: pre-commit
+  pre-push:
+    gitHook: pre-push
+    cmd:
+      - deno test
+    allow:
+      read: ./testdata
+      write: ./testdata
