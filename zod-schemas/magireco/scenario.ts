@@ -6,6 +6,10 @@ export const actionSchema = z.object({
   face: z.string(),
   id: z.number().int(),
   lipSynch: z.number(),
+  live2dParam: z.object({
+    name: z.string(),
+    value: z.number(),
+  }).partial(),
   motion: z.number().int(),
   mouthOpen: z.number(),
   soulGem: z.number(),

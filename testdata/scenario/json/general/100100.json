@@ -10,6 +10,10 @@
             "face": "mtn_ex_010.exp.json",
             "id": 100100,
             "lipSynch": 1,
+            "live2dParam": {
+              "name": "PARAM_SUNGLASSES",
+              "value": 1
+            },
             "motion": 1,
             "mouthOpen": 1,
             "pos": 1,

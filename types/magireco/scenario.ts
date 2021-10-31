@@ -4,6 +4,10 @@ export type Action = {
   face?: string;
   id?: number;
   lipSynch?: number;
+  live2dParam?: {
+    name?: string;
+    value?: number;
+  };
   motion?: number;
   mouthOpen?: number;
   soulGem?: number;

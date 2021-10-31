@@ -300,6 +300,7 @@ function buildCommand(
       mouthOpen,
       soulGem,
       tear,
+      live2dParam,
       textHomeStatus,
     } = action;
     if (motion !== undefined) {
@@ -345,6 +346,13 @@ function buildCommand(
     }
     if (tear !== undefined) {
       commands.push(`parameters lock ParamTear ${tear}`);
+    }
+    if (live2dParam?.name !== undefined && live2dParam?.value !== undefined) {
+      const name = live2dParam.name.replace(
+        /_?([A-Za-z]+)/g,
+        (_, $1: string) => `${$1[0].toUpperCase()}${$1.slice(1).toLowerCase()}`,
+      );
+      commands.push(`parameters lock ${name} ${live2dParam.value}`);
     }
     if (textHomeStatus === "Clear") {
       commands.push(`hide_text`);
