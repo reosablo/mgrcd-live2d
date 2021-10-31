@@ -24,6 +24,8 @@ export function installScenario(
         : undefined;
       const motionDuration = scene.autoTurnFirst !== undefined
         ? scene.autoTurnFirst * 1000
+        : scene.autoTurnLast !== undefined
+        ? scene.autoTurnLast * 1000
         : undefined;
       const actions = scene.chara ?? [];
       const command = buildCommand(roleId, actions, resolver);
