@@ -297,6 +297,7 @@ function buildCommand(
       lipSynch,
       cheek,
       eyeClose,
+      mouthOpen,
       soulGem,
       tear,
       textHomeStatus,
@@ -335,6 +336,9 @@ function buildCommand(
         `parameters lock ParamEyeLOpen ${1 - eyeClose}`,
         `parameters lock ParamEyeROpen ${1 - eyeClose}`,
       );
+    }
+    if (mouthOpen !== undefined) {
+      commands.push(`parameters lock ParamMouthOpenY ${mouthOpen}`);
     }
     if (soulGem !== undefined) {
       commands.push(`parameters lock ParamSoulgem ${soulGem}`);

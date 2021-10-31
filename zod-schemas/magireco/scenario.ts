@@ -7,6 +7,7 @@ export const actionSchema = z.object({
   id: z.number().int(),
   lipSynch: z.number(),
   motion: z.number().int(),
+  mouthOpen: z.number(),
   soulGem: z.number(),
   tear: z.number(),
   textHome: z.string(),

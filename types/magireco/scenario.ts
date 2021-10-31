@@ -5,6 +5,7 @@ export type Action = {
   id?: number;
   lipSynch?: number;
   motion?: number;
+  mouthOpen?: number;
   soulGem?: number;
   tear?: number;
   textHome?: string;
