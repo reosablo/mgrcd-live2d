@@ -1,13 +1,13 @@
+/// <reference path="https://cdn.skypack.dev/@types/wicg-file-system-access@2020.9.4/index.d.ts?dts" />
+
+import { join as joinPath } from "https://deno.land/std@0.113.0/path/mod.ts";
+import { Command } from "https://deno.land/x/cliffy@v0.20.0/command/mod.ts";
+import { listScenario } from "../mod.ts";
 import {
-  Command,
-  ValidationError,
-} from "https://deno.land/x/cliffy@v0.20.0/command/mod.ts";
-import {
-  getCharaName,
-  getScenarioIds,
-  validateResourceDirectory,
-} from "../_internal/io.ts";
-import { patchCharaName } from "../_internal/config.ts";
+  getFileSystemDirectoryHandle,
+  validateFileSystemHandle,
+} from "./_internal/fs.ts";
+import { generalScenarioPath, live2dPath } from "../lib/_internal/io.ts";
 
 export const command = new Command<void>()
   .description("Display Live2D scenario ids from magireco data")
@@ -26,23 +26,31 @@ export const command = new Command<void>()
     { default: true },
   ).action(async ({ resource = ".", detailed }) => {
     try {
-      await validateResourceDirectory(resource);
+      await Promise.all(
+        [live2dPath, generalScenarioPath].map(async (pathSegments) => {
+          const path = joinPath(resource, ...pathSegments);
+          const handle = await getFileSystemDirectoryHandle(path);
+          try {
+            await validateFileSystemHandle(handle);
+          } catch {
+            throw path;
+          }
+        }),
+      );
     } catch (error) {
       if (typeof error === "string") {
-        throw new ValidationError(
+        console.error(
           `resource data directory path invalid: ${error} not found`,
         );
-      }
-      throw error;
-    }
-    for await (const scenarioId of getScenarioIds({ resource })) {
-      if (detailed) {
-        const name = await getCharaName(scenarioId, { resource }).catch((_) =>
-          undefined
-        );
-        console.log(`${scenarioId}${name ? `\t${patchCharaName(name)}` : ""}`);
+        return;
       } else {
-        console.log(scenarioId);
+        throw error;
       }
+    }
+    const handle = await getFileSystemDirectoryHandle(resource);
+    for await (
+      const { scenarioId, name } of listScenario(handle, { detailed })
+    ) {
+      console.log(`${scenarioId}${name !== undefined ? `\t${name}` : ""}`);
     }
   });

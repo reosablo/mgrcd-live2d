@@ -1,38 +1,17 @@
+/// <reference path="https://cdn.skypack.dev/@types/wicg-file-system-access@2020.9.4/index.d.ts?dts" />
+
+import { MuxAsyncIterator } from "https://deno.land/std@0.113.0/async/mux_async_iterator.ts";
+import { join as joinPath } from "https://deno.land/std@0.113.0/path/mod.ts";
 import {
   Command,
   ValidationError,
 } from "https://deno.land/x/cliffy@v0.20.0/command/mod.ts";
+import { bakeExModel, listChara } from "../mod.ts";
 import {
-  getStoryId,
-  spoilerStoryKeys,
-} from "../data/magireco/general-scenario.ts";
-import type { Scenario } from "../types/magireco/scenario.ts";
-import {
-  getCharaIds,
-  getModel,
-  getModelPath,
-  getParam,
-  getScenario,
-  setModel,
-  validateResourceDirectory,
-} from "../_internal/io.ts";
-import {
-  patchCharaName,
-  patchScenario,
-  postprocessModel,
-  preprocessModel,
-  presetMotionMeta,
-  presetMotions,
-  Resolver,
-} from "../_internal/config.ts";
-import {
-  buildStoryEntryCommand,
-  getMotion,
-  getRoleIds,
-  installMotion,
-  installParam,
-  installScenario,
-} from "../_internal/install.ts";
+  getFileSystemDirectoryHandle,
+  validateFileSystemHandle,
+} from "./_internal/fs.ts";
+import { generalScenarioPath, live2dPath } from "../lib/_internal/io.ts";
 
 const castParameterPattern = /^(?<roleId>\d{6})=(?<charaId>\d{6})$/;
 const targetParameterPattern = /^(?<target>\d{6})$/;
@@ -81,15 +60,29 @@ export const command = new Command<void>()
       { resource = ".", all, cast: castArgs = [], spoiler },
       targetArgs = [],
     ) => {
+      let handle: FileSystemDirectoryHandle;
       try {
-        await validateResourceDirectory(resource);
+        await Promise.all(
+          [live2dPath, generalScenarioPath].map(async (pathSegments) => {
+            const path = joinPath(resource, ...pathSegments);
+            const handle = await getFileSystemDirectoryHandle(path);
+            try {
+              await validateFileSystemHandle(handle);
+            } catch {
+              throw path;
+            }
+          }),
+        );
+        handle = await getFileSystemDirectoryHandle(resource);
       } catch (error) {
         if (typeof error === "string") {
-          throw new ValidationError(
+          console.error(
             `resource data directory path invalid: ${error} not found`,
           );
+          return;
+        } else {
+          throw error;
         }
-        throw error;
       }
       let targets = [...targetArgs.reduce((targetArgs, targetArg) => {
         if (!targetParameterPattern.test(targetArg)) {
@@ -106,7 +99,9 @@ export const command = new Command<void>()
           );
         }
         const charaIds = [] as string[];
-        for await (const charaId of getCharaIds({ resource })) {
+        for await (
+          const { charaId } of listChara(handle, { detailed: false })
+        ) {
           charaIds.push(charaId);
         }
         targets = charaIds;
@@ -115,113 +110,43 @@ export const command = new Command<void>()
         const { roleId, charaId } = arg.match(castParameterPattern)!.groups!;
         return [+roleId, +charaId] as const;
       }));
-      await Promise.allSettled(targets.map(async (target) => {
-        const familyId = target.replace(/.{2}$/, "00");
-        let scenarioId: string, scenario: Scenario;
-        try {
-          [scenarioId, scenario] = await getScenario(+target, {
-            resource,
-          })
-            .then(
-              (scenario) => [target, scenario] as const,
-              (_) =>
-                getScenario(+familyId, { resource })
-                  .then((scenario) => [familyId, scenario] as const, (_) => {
-                    throw null;
-                  }),
-            );
-        } catch {
-          console.log(`Skipped because scenario not found: ${target}`);
-          return;
-        }
-        patchScenario(scenario, scenarioId);
-        const cast = baseCast.has(+familyId) ? baseCast : new Map(baseCast).set(
-          +familyId,
-          baseCast.get(+target) ?? +target,
-        );
-        const filteredPresetMotions = presetMotions.filter(([_, motion]) =>
-          spoiler ||
-          !spoilerStoryKeys.includes(motion[presetMotionMeta].storyKey)
-        );
-        const motionEntries = filteredPresetMotions.map((
-          [motionGroupName, motion],
-        ) =>
-          [
-            [motionGroupName, motion.Name],
-            motion[presetMotionMeta].storyKey,
-          ] as const
-        );
-        const storyIds = filteredPresetMotions
-          .map(([_, motion]) => motion[presetMotionMeta].storyKey)
-          .map((storyKey) => getStoryId(scenarioId, scenario, storyKey))
-          .filter((storyId) => storyId !== undefined) as string[];
-        const filteredScenario = {
-          ...scenario,
-          story: Object.fromEntries(
-            Object.entries(scenario.story ?? {})
-              .filter(([storyId, _story]) => storyIds.includes(storyId)),
-          ),
-        };
-        const resolver = new Resolver(
-          scenarioId,
-          { cast: (roleId) => `${cast.get(roleId) ?? roleId}` },
-        );
-        const roleIds = [...getRoleIds(filteredScenario, resolver)]
-          .filter((roleId) => roleId !== undefined && roleId > 0) as number[];
-        for (const roleId of roleIds) {
-          const charaId = `${cast.get(roleId) ?? roleId}`;
-          const [model, param] = await Promise.all([
-            getModel(charaId, { resource }).catch((_) => undefined),
-            getParam(charaId, { resource }).catch((_) => undefined),
-          ]);
-          if (model === undefined) {
-            console.log(
-              `Skipped because model not found: ${charaId} (roleId=${roleId})`,
-            );
-            continue;
-          }
-          preprocessModel(model);
-          for (const [motionGroupName, motion] of filteredPresetMotions) {
-            installMotion(model, motionGroupName, { ...motion });
-          }
-          for (const [motionIndex, storyKey] of motionEntries) {
-            const motion = getMotion(model, motionIndex)!;
-            const storyId = getStoryId(scenarioId, scenario, storyKey)!;
-            const storyMotionIndex = resolver.getMotionIndex(
-              "scene",
-              storyId,
-              0,
-            );
-            motion.Command = buildStoryEntryCommand(
-              roleId,
-              roleIds,
-              storyMotionIndex,
-              resolver,
-            );
-          }
-          installScenario(model, filteredScenario, roleId, resolver);
-          if (param !== undefined) {
-            installParam(model, {
-              ...param,
-              charaName: patchCharaName(param.charaName),
-            });
-          }
-          (model.Options ??= {}).Id = resolver.getModelId(roleId);
-          postprocessModel(model);
-          const basename = roleIds.length > 1
-            ? `model-${scenarioId}@${roleId}`
-            : `model-${scenarioId}`;
-          await setModel(charaId, model, { resource, basename });
-          const modelPath = getModelPath(charaId, { resource, basename });
-          console.log(`Generated: ${modelPath}`);
-        }
-      })).then((results) => {
-        for (const result of results) {
-          if (result.status === "rejected") {
-            const { reason } = result;
-            console.error(reason instanceof Error ? reason.message : reason);
+      const iters = targets.map((target) =>
+        bakeExModel(handle, target, {
+          allowSpoiler: spoiler,
+          cast: baseCast,
+        })
+      );
+      type Item = typeof iters extends AsyncIterable<infer T>[] ? T : never;
+      const mux = new MuxAsyncIterator<Item>();
+      for (const iter of iters) {
+        mux.add(iter);
+      }
+      for await (const result of mux) {
+        output:
+        switch (result.type) {
+          case "success":
+            console.log(`Generated: ${resource}/${joinPath(...result.path)}`);
+            break;
+          case "skip":
+            switch (result.reason) {
+              case "SCENARIO_NOT_FOUND":
+                console.log(
+                  `Skipped because scenario not found: ${result.target}`,
+                );
+                break output;
+              case "MODEL_NOT_FOUND":
+                console.log(
+                  `Skipped because model not found: ${result.target}`,
+                );
+                break output;
+            }
+            /* falls through */
+          default: {
+            const error = result.error;
+            const message = error instanceof Error ? error.message : error;
+            console.error(`Error: ${message}`);
           }
         }
-      });
+      }
     },
   );

@@ -1,18 +1,16 @@
+/// <reference path="https://cdn.skypack.dev/@types/wicg-file-system-access@2020.9.4/index.d.ts?dts" />
+
+import { join as joinPath } from "https://deno.land/std@0.113.0/path/mod.ts";
 import {
   Command,
   ValidationError,
 } from "https://deno.land/x/cliffy@v0.20.0/command/mod.ts";
+import { listRole } from "../mod.ts";
 import {
-  getCharaName,
-  getScenario,
-  validateResourceDirectory,
-} from "../_internal/io.ts";
-import {
-  patchCharaName,
-  patchScenario,
-  Resolver,
-} from "../_internal/config.ts";
-import { getRoleIds } from "../_internal/install.ts";
+  getFileSystemDirectoryHandle,
+  validateFileSystemHandle,
+} from "./_internal/fs.ts";
+import { generalScenarioPath, live2dPath } from "../lib/_internal/io.ts";
 
 const scenarioIdPattern = /^(?<target>\d{6})$/;
 
@@ -33,40 +31,38 @@ export const command = new Command<void>()
     "Output with names",
     { default: true },
   ).action(async ({ resource = ".", detailed }, scenarioId) => {
+    let handle: FileSystemDirectoryHandle;
     try {
-      await validateResourceDirectory(resource);
+      await Promise.all(
+        [live2dPath, generalScenarioPath].map(async (pathSegments) => {
+          const path = joinPath(resource, ...pathSegments);
+          const handle = await getFileSystemDirectoryHandle(path);
+          try {
+            await validateFileSystemHandle(handle);
+          } catch {
+            throw path;
+          }
+        }),
+      );
+      handle = await getFileSystemDirectoryHandle(resource);
     } catch (error) {
       if (typeof error === "string") {
-        throw new ValidationError(
+        console.error(
           `resource data directory path invalid: ${error} not found`,
         );
+        return;
+      } else {
+        throw error;
       }
-      throw error;
     }
     if (!scenarioIdPattern.test(scenarioId)) {
       throw new ValidationError(
         `positional parameters must match ${scenarioIdPattern}: "${scenarioId}"`,
       );
     }
-    let scenario;
-    try {
-      scenario = await getScenario(+scenarioId, { resource });
-    } catch {
-      throw new ValidationError(`scenario not found: ${scenarioId}`);
-    }
-    patchScenario(scenario, scenarioId);
-    const resolver = new Resolver(scenarioId);
-    const roleIds = [...getRoleIds(scenario, resolver)].sort((a, b) =>
-      a === undefined ? 1 : b === undefined ? -1 : a - b
-    );
-    for (const roleId of roleIds) {
-      if (detailed) {
-        const name = await getCharaName(`${roleId}`, { resource }).catch((_) =>
-          undefined
-        );
-        console.log(`${roleId}${name ? `\t${patchCharaName(name)}` : ""}`);
-      } else {
-        console.log(roleId);
-      }
+    for await (
+      const { roleId, name } of listRole(handle, scenarioId, { detailed })
+    ) {
+      console.log(`${roleId}${name !== undefined ? `\t${name}` : ""}`);
     }
   });

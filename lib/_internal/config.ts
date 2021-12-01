@@ -1,7 +1,7 @@
 import type { Resolver as ResolverType } from "./install.ts";
-import type { Model, Motion } from "../types/Live2DViewerEX/model.model3.ts";
-import type { Scenario } from "../types/magireco/scenario.ts";
-import type { stories } from "../data/magireco/general-scenario.ts";
+import type { Model, Motion } from "../../types/Live2DViewerEX/model.model3.ts";
+import type { Scenario } from "../../types/magireco/scenario.ts";
+import type { stories } from "../../data/magireco/general-scenario.ts";
 
 export const presetMotionMeta = Symbol();
 

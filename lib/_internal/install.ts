@@ -2,9 +2,9 @@ import type {
   Expression,
   Model,
   Motion,
-} from "../types/Live2DViewerEX/model.model3.ts";
-import type { Param } from "../types/magireco/model-params.ts";
-import type { Action, Scenario } from "../types/magireco/scenario.ts";
+} from "../../types/Live2DViewerEX/model.model3.ts";
+import type { Param } from "../../types/magireco/model-params.ts";
+import type { Action, Scenario } from "../../types/magireco/scenario.ts";
 
 const motionReferencePattern = /^(?<motionGroupName>.*?)(:(?<motionName>.*))?$/;
 
