@@ -1,5 +1,3 @@
-/// <reference path="https://cdn.skypack.dev/@types/wicg-file-system-access@2020.9.4/index.d.ts?dts" />
-
 import { MuxAsyncIterator } from "https://deno.land/std@0.113.0/async/mux_async_iterator.ts";
 import { join as joinPath } from "https://deno.land/std@0.113.0/path/mod.ts";
 import {
