@@ -1,13 +1,19 @@
 scripts:
-  pre-commit:
-    gitHook: pre-commit
-    cmd:
-      - deno fmt
-      - deno lint
-  pre-push:
-    gitHook: pre-push
-    cmd:
-      - deno test
+  fmt:
+    cmd: deno fmt
+  lint:
+    cmd: deno lint
+  test:
+    cmd: deno test
     allow:
       read: ./testdata
       write: ./testdata
+  pre-commit:
+    gitHook: pre-commit
+    cmd:
+      - vr fmt
+      - vr lint
+  pre-push:
+    gitHook: pre-push
+    cmd:
+      - vr test
