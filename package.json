@@ -4,9 +4,10 @@
   "description": "Live2D model generator for Live2DViewerEX from magireco game contents",
   "private": true,
   "type": "module",
-  "main": "./mod.ts",
+  "main": "./dist/mod.js",
   "files": [
     "/data",
+    "/dist",
     "/lib",
     "/types",
     "/mod.ts"

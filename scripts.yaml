@@ -1,13 +1,26 @@
 scripts:
   fmt:
-    cmd: deno fmt
+    cmd: deno fmt --config ./deno.jsonc
   lint:
-    cmd: deno lint
+    cmd: deno lint --config ./deno.jsonc
   test:
     cmd: deno test
     allow:
       read: ./testdata
       write: ./testdata
+    tsconfig: ./deno.jsonc
+  build:
+    cmd:
+      - 'deno eval "Deno.mkdir(''dist'', { recursive: true })"'
+      - cmd: https://deno.land/x/deno_bundle@v1.0.1/cli.js mod.ts dist/mod.js
+        allow:
+          env: true
+          read: $HOME
+          write: $HOME
+          net: deno.land,cdn.skypack.dev
+          run: true
+        noCheck: true
+        unstable: true
   pre-commit:
     gitHook: pre-commit
     cmd:

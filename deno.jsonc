@@ -1,0 +1,12 @@
+{
+  "fmt": {
+    "files": {
+      "exclude": ["./dist/", "./testdata/"]
+    }
+  },
+  "lint": {
+    "files": {
+      "exclude": ["./dist/", "./testdata/"]
+    }
+  }
+}
